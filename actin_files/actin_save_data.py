@@ -5,7 +5,6 @@ import pylab as plt
 import numpy as np
 
 # ACTIN FILES:
-import pyrdb
 import actin_functions as func
 
 
@@ -35,7 +34,7 @@ def check_duplicate(obj, date, file_type, out_dir):
 
 	file_pname = '%s/%s/%s_%s_actin.rdb' % (out_dir, obj, obj, file_type)
 	if os.path.isfile(file_pname):
-		
+
 		rdb_data = func.read_rdb(file_pname)[0]
 
 		if date in rdb_data['date']:

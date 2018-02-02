@@ -8,7 +8,6 @@ import pylab as plt
 sys.path.append("specha_files/")
 
 # SPECHA files
-import pyrdb
 import actin_functions as func
 
 
@@ -29,7 +28,7 @@ def plt_time(rdb_file, save_plt=False, rmv_flgs=False):
     star = rdb_file.split('/')[-1].split('_')[0]
     dir = ('/').join(rdb_file.split('/')[:-1])
 
-    data = pyrdb.read_rdb(rdb_file)[0]
+    data = func.read_rdb(rdb_file)[0]
 
     bjd = np.asarray(data['bjd']) - 2450000
 
@@ -96,7 +95,7 @@ def plt_time_mlty(rdb_file, save_plt=False, rmv_flgs=False, hdrs=['I_CaII', 'I_H
     star = rdb_file.split('/')[-1].split('_')[0]
     dir = ('/').join(rdb_file.split('/')[:-1])
 
-    data = pyrdb.read_rdb(rdb_file)[0]
+    data = func.read_rdb(rdb_file)[0]
 
     bjd = np.asarray(data['bjd']) - 2450000
 
