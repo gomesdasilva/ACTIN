@@ -12,20 +12,6 @@ import astropy.io.fits as pyfits
 
 path = os.path.dirname(os.path.realpath(__file__)) # directory of actin.py
 
-# Location of SPECHA files:
-#sys.path.append("%s/specha_files/" % path)
-
-# SPECHA FILES:
-# import pyrdb
-# import config
-# import read_e2ds
-# import read_adp
-# import read_s1d
-# import get_win_diaz
-# import calc_ind
-# import save_data
-# import plot_time as plot
-# import functions as func
 
 # location of ACTIN files:
 sys.path.append("%s/actin_files/" % path)
