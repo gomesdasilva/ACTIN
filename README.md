@@ -17,11 +17,11 @@ where
 
 Options:
 
-`-i` bool : Calculate indices chosen in lines.config file. Default is `True`.
+`-i` list : List of indices to calculate. Indices ids must match the ones in the config file 'config_lines.txt'. If 'False' no indices are calculated (default).
 
-`-s` bool : Save output to .rdb table in specified path. If 'False' no output table is saved (default).
+`-s` str : Save output to .rdb table in specified path. If 'False' no output table is saved (default).
 
-`-p` bool : Save plots of the lines used to calculate the indices in the specified path. If 'same' uses the table output path in '-s'. If 'False' no plots are saved (default). if `True`.
+`-p` str : Save plots of the lines used to calculate the indices in the specified path. If 'same' uses the table output path in '-s'. If 'False' no plots are saved (default). if `True`.
 
 `-obj` str : Object name to override the one from fits files in case the star has multiple names (ex. Proxima, ProximaCen, Gl551). Default is `None`.
 
