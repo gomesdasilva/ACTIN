@@ -34,4 +34,10 @@ Options:
 `-w` str : Weight used to calculate the flux in the lines. `blaze` uses the blaze function as weight, flux is normalized by the sum of the weight function, `None` the flux is unweighted and normalized by number of pixels.
 
 
+### Example:
+
+`python actin.py ../fits/*/*e2ds_A.fits -i I_CaII I_Ha -s ../output -p same -del True -tl Gl273 Gl581`
+
+This will execute ACTIN for all the subdirectories inside `../fits/` with files ending with `e2ds_A.fits`, calculate the indices `I_CaII` and `I_Ha`, output the data to `../output/star_names`, save spectra of the line regions to the same directory as data, and, before running the code, delete any output file that was previously there, in this case `Gl273_e2ds_actin.rdb` and `Gl581_e2ds_actin.rdb` files. Only fits files belonging to the stars chosen in `-tl` will be read, in this case `Gl273` and `Gl581`.
+
 *Any enquiries or bug reports to João Gomes da Silva, Joao.Silva(at)astro.up.pt*
