@@ -12,7 +12,6 @@ import astropy.io.fits as pyfits
 
 path = os.path.dirname(os.path.realpath(__file__)) # directory of actin.py
 
-
 # location of ACTIN files:
 sys.path.append("%s/actin_files/" % path)
 import pyrdb
