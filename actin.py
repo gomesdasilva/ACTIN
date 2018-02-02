@@ -12,7 +12,6 @@ path = os.path.dirname(os.path.realpath(__file__)) # directory of actin.py
 
 # location of ACTIN files:
 sys.path.append("%s/actin_files/" % path)
-import pyrdb
 import actin_config
 import actin_read_e2ds as read_e2ds
 import actin_read_s1d as read_s1d
