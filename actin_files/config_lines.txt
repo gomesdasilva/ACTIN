@@ -1,0 +1,34 @@
+INSTRUCTIONS:
+-------------
+ind_id: Identification of the index to which the line ‘ln_id’ belongs. Must start with ‘I_’.
+ind_c: Constant to be multiplied to the line flux.
+ind_var: Variable of the line in the index equation, ‘Ln’ for core line, ‘Rn’ for reference line, n is line an identification number.
+ln_id: Line unique identification.
+ln_ctr: Line centre in angstroms.
+ln_win: Window range centred at ‘ln_ctr’ to compute flux, in angstroms.
+--------------------------------------------------------
+ind_id	ind_c	ind_var	ln_id	ln_ctr	ln_win	bandtype
+--------------------------------------------------------
+I_CaII	1	L1	CaIIH	3933.664	1.09	tri
+I_CaII	1	L2	CaIIK	3968.470	1.09	tri
+I_CaII	1	R1	CaIIR1	3901.070	20.0	sq
+I_CaII	1	R2	CaIIR2	4001.070	20.0	sq
+I_NaI	1	L1	NaID1	5895.920	0.5	sq
+I_NaI	1	L2	NaID2	5889.950	0.5	sq
+I_NaI	1	R1	NaIR1	5805.000	10.0	sq
+I_NaI	1	R2	NaIR2	6097.000	20.0	sq
+I_Ha	1	L1	Ha	6562.808	1.6	sq
+I_Ha	1	R1	HaR1	6550.870	10.75	sq
+I_Ha	1	R2	HaR2	6580.310	8.75	sq
+I_HeI	1	L1	HeI	5875.620	0.4	sq
+I_HeI	1	R1	HeIR1	5869.000	5.0	sq
+I_HeI	1	R2	HeIR2	5881.000	5.0	sq
+I_Ca	1	L1	Ca	6572.796	0.3	sq
+I_Ca	1	R1	CaR1	6550.870	10.75	sq
+I_Ca	1	R2	CaR2	6580.310	8.75	sq
+I_B	1	L1	TiO	5670.000	160.0	sq
+I_B	1	R1	TiOR1	6100.000	100.0	sq
+I_CaIIB	1	L1	CaIIBH	3933.664	0.41	sq
+I_CaIIB	1	L2	CaIIBK	3968.470	0.41	sq
+I_CaIIB	1	R1	CaIIBR1	3954.300	3.4	sq
+I_CaIIB	1	R2	CaIIBR2	3975.400	1.2	sq
