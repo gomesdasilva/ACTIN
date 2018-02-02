@@ -6,8 +6,6 @@ import numpy as np
 
 import time
 
-# change name to SPACIN?
-
 import astropy.io.fits as pyfits
 
 path = os.path.dirname(os.path.realpath(__file__)) # directory of actin.py
