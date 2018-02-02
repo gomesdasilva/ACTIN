@@ -25,7 +25,7 @@ import actin_functions as func
 
 
 # Configuration files:
-config_file = '%s/actin_files/config_lines.txt' % path
+config_file = '%s/config_lines.txt' % path
 
 
 def actin_file(file, calc_index, config_file=config_file, save_output=False, line_plots=False, obj_name=None, targ_list=None, del_out=False, weight=None):

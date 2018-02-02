@@ -7,7 +7,7 @@ import numpy as np
 import actin_get_win as get_win
 import actin_save_data as save_data
 
-import get_win_diaz
+#import get_win_diaz
 
 # add option to show flux in each line
 

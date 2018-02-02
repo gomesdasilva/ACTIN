@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
+import string
 from pylab import *
 import astropy.io.fits as pyfits
 import numpy as np
 
 
-# call this function get_win and redo calc_ind, etc.
+
 def frac_pixels(wave, flux, wmin, wmax):
     """
     TESTED
@@ -21,19 +22,6 @@ def frac_pixels(wave, flux, wmin, wmax):
     frac_left = 1 - (wave[cond][0] - wmin)/pix_size[(wave < wmin)][-1]
     frac_right = (wmax - wave[cond][-1])/pix_size[(wave < wmax)][-1]
 
-    # Diaz method:
-    # fraction_left = 0.5 - (wmin - wave[cond])/pix_size[cond]
-    # fraction_right = 0.5 - (wave[cond] - wmax)/pix_size[cond]
-    # fraction_left = np.where(fraction_left > 1, 1.0, fraction_left)
-    # fraction_right = np.where(fraction_right > 1, 1.0, fraction_right)
-    # frac_left = fraction_left[0]
-    # frac_right = fraction_right[-1]
-    # frac_flux_left = flux[cond][0] * frac_left
-    # frac_flux_right = flux[cond][-1] * frac_right
-    # flux_win = flux[cond]
-    # flux_win[0] = frac_flux_left
-    # flux_win[-1] = frac_flux_right
-
     pixels_win = len(wave[cond]) + frac_left + frac_right
 
     frac_flux_left = flux[(wave < wmin)][-1] * frac_left
@@ -43,9 +31,7 @@ def frac_pixels(wave, flux, wmin, wmax):
     flux_win = np.insert(flux_win, 0, frac_flux_left)
     flux_win = np.append(flux_win, frac_flux_right)
 
-    #frac_flux = frac_flux_left + frac_flux_right
-
-    return flux_win#, frac_flux
+    return flux_win
 
 
 def compute_flux(wave, flux, blaze, ln_ctr, ln_win, ln_c, bandtype, weight=None):
@@ -67,11 +53,6 @@ def compute_flux(wave, flux, blaze, ln_ctr, ln_win, ln_c, bandtype, weight=None)
     flux_win = frac_pixels(wave, flux, wmin, wmax)
     blaze_win = frac_pixels(wave, blaze, wmin, wmax)
 
-    print "MEAN FLUX_WIN = %s" % np.mean(flux_win)
-    print "MEAN BLAZE_WIN = %s" % np.mean(blaze_win)
-    print "SUM FLUX/BLAZE WIN = %s" % sum(flux_win/blaze_win)
-    print "N FLUX_WIN = %s" % len(flux_win)
-
     flux_win_norm = flux_win/blaze_win
 
     if bandtype == 'sq':
@@ -89,7 +70,6 @@ def compute_flux(wave, flux, blaze, ln_ctr, ln_win, ln_c, bandtype, weight=None)
 
     f_sum = ln_c * sum(flux_win_norm * weight_win)/sum(weight_win)
 
-
     # err = sqrt(flux), var = err**2
     variance = flux_win/blaze_win**2
 
@@ -97,49 +77,6 @@ def compute_flux(wave, flux, blaze, ln_ctr, ln_win, ln_c, bandtype, weight=None)
     f_sum_err = ln_c * np.sqrt(f_sum_var)
 
     return f_sum, f_sum_err, bandfunc
-
-
-def get_target(fits_file):
-
-    hdu = pyfits.open(fits_file)
-
-    try: obj = hdu[0].header['OBJECT']
-    except:
-        try: obj = hdu[0].header['ESO OBS TARG NAME']
-        except:
-            try: obj = hdu[0].header['TNG OBS TARG NAME']
-            except:
-                print "Cannot identify object"
-                return
-
-    return obj
-
-
-
-# not used yet, not tested yet
-def calc_ind(table):
-    """
-    table with keys: ind_var, flux, flux_err, flg, frac_neg, snr
-    """
-
-    var = np.asarray(table['ind_var'])
-    flux = np.asarray(table['flux'])
-    flux_err = np.asarray(table['flux_err'])
-
-    num = flux['L' in var]
-    num_err = flux_err['L' in var]
-    denom = flux['R' in var]
-    denom_err = flux_err['R' in var]
-
-    ind = sum(num) / sum(denom)
-
-    # error using propagation of errors for lines and ref lines
-    ind_err = np.sqrt(sum(num_err**2) + ind**2 * sum(denom_err**2))/sum(denom)
-
-    return ind, ind_err
-
-
-
 
 
 def flag_negflux(flux):
@@ -181,6 +118,22 @@ def plot_params(width=6, height=3.5):
     return width, height
 
 
+def get_target(fits_file):
+
+    hdu = pyfits.open(fits_file)
+
+    try: obj = hdu[0].header['OBJECT']
+    except:
+        try: obj = hdu[0].header['ESO OBS TARG NAME']
+        except:
+            try: obj = hdu[0].header['TNG OBS TARG NAME']
+            except:
+                print "Cannot identify object"
+                return
+
+    return obj
+
+
 def check_targ(fits_file, targets):
     """
     Checks if a fits file belongs to a target in a list of targets.
@@ -209,3 +162,59 @@ def check_targ(fits_file, targets):
 
     if obj in targets: return True
     else: return False
+
+
+def read_rdb(filename):
+# use: table = pyrdb.read_rdb(file)[0] for data
+# use: table = pyrdb.read_rdb(file)[1] to get the keys by order
+
+	f = open(filename, 'r')
+	data = f.readlines()
+	f.close()
+
+	key = string.split(data[0][:-1],'\t')
+	output = {}
+	for i in range(len(key)): output[key[i]] = []
+
+	for line in data[2:]:
+		qq = string.split(line[:-1],'\t')
+		for i in range(len(key)):
+			try: value = float(qq[i])
+			except ValueError: value = qq[i]
+			output[key[i]].append(value)
+
+	return output,key
+
+
+def save_rdb(dic,keys,file):
+
+	out = open(file,'w')
+	n_keys = len(keys)
+
+	for k in range(n_keys):
+		if k != n_keys-1: out.write('%s\t' % (keys[k]))
+		else: out.write('%s' % (keys[k]))
+	out.write('\n')
+	for k in range(n_keys):
+		if k != n_keys-1: out.write('%s\t' % ('-'*len(keys[k])))
+		else: out.write('%s' % ('-'*len(keys[k])))
+	out.write('\n')
+
+	for i in range(len(dic[keys[0]])):
+		for k in range(n_keys):
+			if k != n_keys-1: out.write('%s\t' % (dic[keys[k]][i]))
+			else: out.write('%s' % (dic[keys[k]][i]))
+		out.write('\n')
+	out.close()
+
+
+def add_rdb(dic,keys,file_name):
+
+    out = open(file_name,'a')
+    n_keys = len(keys)
+    for i in range(len(dic[keys[0]])):
+        for k in range(n_keys):
+            if k != n_keys-1: out.write('%s\t' % (dic[keys[k]][i]))
+            else: out.write('%s\t' % (dic[keys[k]][i]))
+        out.write('\n')
+    out.close()

@@ -35,7 +35,9 @@ def check_duplicate(obj, date, file_type, out_dir):
 
 	file_pname = '%s/%s/%s_%s_actin.rdb' % (out_dir, obj, obj, file_type)
 	if os.path.isfile(file_pname):
-		rdb_data = pyrdb.read_rdb(file_pname)[0]
+		
+		rdb_data = func.read_rdb(file_pname)[0]
+
 		if date in rdb_data['date']:
 			print "Date %s already saved in %s" % (date,file_pname)
 			print "*** ACTION: Ignoring measurement"
@@ -212,10 +214,10 @@ def save_data(data, index, out_dir):
 	save_name = "%s/%s/%s_%s_actin.rdb" % (out_dir, all_data['obj'], all_data['obj'], data['file_type'])
 
 	if not os.path.isfile(save_name):
-		pyrdb.save_rdb(data_save, keys, save_name)
+		func.save_rdb(data_save, keys, save_name)
 		print "%s | %s | Data saved to %s" % (all_data['obj'], all_data['date'], save_name)
 	else:
-		pyrdb.add_rdb(data_save, keys, save_name)
+		func.add_rdb(data_save, keys, save_name)
 		print "%s | %s | Data added to %s" % (all_data['obj'], all_data['date'], save_name)
 
 	return save_name

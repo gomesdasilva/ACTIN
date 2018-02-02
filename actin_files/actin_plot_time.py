@@ -9,7 +9,7 @@ sys.path.append("specha_files/")
 
 # SPECHA files
 import pyrdb
-import functions as func
+import actin_functions as func
 
 
 
