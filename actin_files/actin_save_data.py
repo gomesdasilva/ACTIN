@@ -15,11 +15,13 @@ def check_duplicate(obj, date, file_type, out_dir):
 	Parameters:
 	-----------
 	obj : str
-		Object (target) identification.
+		Object identification.
 	date : str
 		Date of observation in the fits file format.
-	output_dir : str, optional
-		Directory of output file, 'output' is default.
+	file_type : str
+		Type of file used: 'e2ds', 's1d', 'ADP', or 'rdb'.
+	output_dir : str
+		Directory of output file.
 
 	Returns:
 	--------
@@ -30,7 +32,7 @@ def check_duplicate(obj, date, file_type, out_dir):
 	print "\nCHECKING DUPLICATE"
 	print "------------------"
 
-	if obj == None or date == None or out_dir == None: return
+	if obj is None or date is None or out_dir is None: return
 
 	file_pname = '%s/%s/%s_%s_actin.rdb' % (out_dir, obj, obj, file_type)
 	if os.path.isfile(file_pname):
@@ -157,14 +159,22 @@ def save_data(data, index, out_dir):
 					if negative flux detected in any of the lines used to
 					compute the index, None otherwise.
 		==========  ========================================================
-	output_dir : str, optional
-		Directory of the saved rdb file, 'output' is default.
+
+	output_dir : str
+		Directory of the saved rdb file.
+
+	Returns:
+	--------
+		Saves output to .rdb file with name and path given by 'save_name'.
+
+		save_name : str
+			Output filename with path.
 	"""
 
 	print "\nSAVING DATA"
 	print "-----------"
 
-	if data == None or out_dir == None: return
+	if data is None or out_dir is None: return
 
 	# For case of reading from rdb, obj and date will be huge repeating lists
 	# reading from rdb file
@@ -174,7 +184,7 @@ def save_data(data, index, out_dir):
 		data['bjd'] = data['bjd'][0]
 		data_keys = ['obj','date','bjd']
 	else:
-		data_keys = ['obj', 'date', 'bjd', 'median_snr', 'data_flg']
+		data_keys = ['obj', 'instr', 'date', 'bjd', 'rv', 'rv_err', 'median_snr', 'data_flg']
 
 	if not os.path.isdir(out_dir):
 		os.makedirs(out_dir)

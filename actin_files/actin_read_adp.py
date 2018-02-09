@@ -8,20 +8,21 @@ import astropy.io.fits as pyfits
 lightspeed = 299792458.0 # [m/s]
 
 
-
-def read_file_adp(adp_pfile):
+def read_file_adp(adp_pfile, obj_name=None):
 	"""
 	Reads ADP fits file and recovers all necessary files to compute
 	spectrum (including CCF). To be used with load_data_adp function.
 
-		Some functionalities:
-		- Automatically recognises if instrument is HARPS or HARPS-N
-		- Automatically detects if ADP file is science or calibration
+		Functionalities:
+		- Recognises if instrument is HARPS or HARPS-N.
+		- Ignores file if not science (ThAr flux).
 
 	Parameters:
 	-----------
 	adp_pfile : str
-		ADP fits file name with path.
+		ADP fits filename with path.
+	obj_name : str (optional)
+		Name given to object that overrides the name from fits file. None is default.
 
 	Returns:
 	--------
@@ -33,73 +34,91 @@ def read_file_adp(adp_pfile):
 		==========  ========================================================
 		keys		Description
 		----------  --------------------------------------------------------
-		adp 		str : ADP fits file name with path.
-		ccf 		str : CCF fits file name with path.
-		obj 		str : Object (target) identification.
+		adp 		str : ADP fits filename with path.
+		ccf 		str : CCF fits filename with path.
+		instr		str : Instrument identification.
+		obs			str : Code related to instrument to be used in fits
+					headers.
+		obj 		str : Object identification.
 		date 		str : Date of observation in the fits file format.
 		==========  ========================================================
-
 	"""
-
-	if adp_pfile == None: return
 
 	print "\nREADING FILES FROM ADP FITS FILE"
 	print "--------------------------------"
 
-	files = {}
-
-	folder = '/'.join(adp_pfile.split('/')[:-1])
-	print "WORKING FOLDER:\t%s/" % folder
-
-	adp_file = "/".join(adp_pfile.split("/")[-1:])
-	print "READING FILE:\t%s" % adp_file
-
-	try:
-		adp = pyfits.open(adp_pfile)
-	except:
-		print "*** ERROR: Cannot read %s" % adp_file
+	if adp_pfile is None:
+		print "*** ERROR: ADP file with path required"
 		return
 
-	date = adp[0].header['DATE-OBS']
-	instr = adp[0].header['INSTRUME'] # instrument used
+	try: adp = pyfits.open(adp_pfile)
+	except:
+		print "*** ERROR: Cannot read %s" % adp_pfile
+		return
+
+	folder = '/'.join(adp_pfile.split('/')[:-1])
+	adp_file = "/".join(adp_pfile.split("/")[-1:])
+
+	print "WORKING FOLDER:\t%s/" % folder
+	print "READING FILE:\t%s" % adp_file
 
 	tel = adp[0].header['TELESCOP'] # ESO-3P6 for HARPS, TNG for HARPS-N
+	instr = adp[0].header['INSTRUME'] # instrument used
+
 	print "TELESCOPE:\t%s" % tel
+	print "INSTRUMENT:\t%s" % instr
+
+	if instr == 'HARPS': obs = 'ESO'
+	elif instr == 'HARPN': obs = 'TNG'
+	else:
+		print "*** ERROR: Instrument not recognized"
 
 	try: obj = adp[0].header['OBJECT']
 	except:
-		try: obj = adp[0].header['%s OBS TARG NAME' % tel[:3]]
-		except: return
+		try: obj = adp[0].header['%s OBS TARG NAME' % obs]
+		except:
+			print "*** ERROR: Cannot identify object"
+			return
+
 	print "OBJECT:\t\t%s" % obj
 
+	# Check if target is science or calibration file
 	if obj in ('WAVE,WAVE,THAR1','WAVE,WAVE,THAR2'):
 		print '*** ERROR: File is ThAr flux'
 		return
 
-	# using date[:-1] because the time of the production of ccf file can be
-	# some miliseconds after the date-obs
-	try:
-		ccf_pfile = glob.glob('%s/%s.%s*_ccf_*.fits' % (folder,instr,date[:-1]))[0]
+	# Override object name with name given in obj_name option
+	if obj_name is not None:
+		if type(obj_name) is list and len(obj_name) == 1:
+			obj = obj_name[0]
+		elif type(obj_name) is list and len(obj_name) > 1:
+			print "*** ERROR: obj_name requires only one name, more than one given"
+			return
+		else: obj = obj_name
 
+	date = adp[0].header['DATE-OBS']
+
+	adp.close()
+
+	ccf_pfile = glob.glob('%s/%s.%s_ccf_*.fits' % (folder,instr,date))[0]
+
+	print "CCF FILE:\t%s" % ccf_pfile.split('/')[-1]
+
+	# Test CCF file
+	try:
 		ccf_fits = pyfits.open(ccf_pfile)
 		ccf_fits.close()
 	except:
-		print "*** ERROR: Cannot read ccf file"
+		print "*** ERROR: Cannot read ccf file, but required for wavelength calibration"
 		return
 
-
-	# Test ccf file
-	#try:
-	#	ccf_fits = pyfits.open(ccf_pfile)
-	#	ccf_fits.close()
-	#except:
-	#	print "*** ERROR: Cannot read ccf file"
-	#	return
-
+	files = {}
 	files['adp'] = adp_pfile
 	files['ccf'] = ccf_pfile
-	files['date'] = date # for check_duplicate
-	files['obj'] = obj # for check_duplicate
+	files['instr'] = instr
+	files['obs'] = obs
+	files['date'] = date
+	files['obj'] = obj
 
 	return files
 
@@ -108,8 +127,8 @@ def load_data_adp(files):
 	"""
 	Loads data from the files returned from read_file_adp.
 
-		Some functionalities:
-		- Automatically recognises if instrument is HARPS or HARPS-N.
+		Functionalities:
+		- Recognises if instrument is HARPS or HARPS-N.
 		- Corrects wavelength for RV (rest frame).
 
 	Parameters:
@@ -122,8 +141,11 @@ def load_data_adp(files):
 		==========  ========================================================
 		keys		Description
 		----------  --------------------------------------------------------
-		adp 		str : ADP fits file name with path.
-		ccf 		str : CCF fits file name with path.
+		adp 		str : ADP fits filename with path.
+		ccf 		str : CCF fits filename with path.
+		instr		str : Instrument identification.
+		obs			str : Code related to instrument to be used in fits
+					headers.
 		==========  ========================================================
 
 	Returns:
@@ -139,36 +161,32 @@ def load_data_adp(files):
 		==========  ========================================================
 		keys		Description
 		----------  --------------------------------------------------------
-		wave 		float : Wavelength calibrated for BERV and RV (at rest
-					frame) per pixel [angstrom].
-		flux 		float : Flux per pixel.
+		wave 		list : Wavelength calibrated for BERV and RV (at rest
+					frame) per pixel [angstroms].
+		flux 		list : Deblazed flux per pixel.
 		median_snr 	float : Median SNR of spectrum.
-		obj 		str : Object (target) identification.
+		obj 		str : Object identification.
 		date 		str : Date of observation in the fits file format.
 		bjd 		float : Barycentric Julian date of observation [days].
-		rv 			float : Object radial velocity corrected for BERV [m/s].
-		rv_err 		float : Error on the radial velocity (photon noise)
-					[m/s].
-		b_v 		float, None : B-V color of object as given in the ADP
-					file, None if not available.
+		rv 			float : Radial velocity corrected for BERV [m/s].
+		rv_err 		float : Error on the radial velocity [m/s].
+		instr		str : Instrument identification.
 		data_flg 	None : Flag, not implemented.
 		==========  ========================================================
-
 	"""
-
-	if files == None: return
 
 	print "\nREADING DATA FROM ADP FITS FILE"
 	print "-------------------------------"
 
-	data = {}
+	if files is None:
+		print "*** ERROR: files dictionary is empty"
+		return
+
 	flg = None
 
-	try:
-		adp = pyfits.open(files['adp'])
-	except:
-		print "ERROR: Cannot read adp file"
-		return
+	obs = files['obs']
+
+	adp = pyfits.open(files['adp'])
 
 	flux = adp[1].data[0][1]
 	print "Flux data read success"
@@ -176,45 +194,39 @@ def load_data_adp(files):
 	wave_orig = adp[1].data[0][0]
 	print "Wave data read success"
 
-	hdr = adp[0].header
+	header = adp[0].header
 
-	tel = hdr['TELESCOP'] # ESO-3P6 for HARPS, TNG for HARPS-N
-	date = hdr['DATE-OBS'] # Observation date in file format
-	obj = hdr['%s OBS TARG NAME' % (tel[:3])] # Target Id
-	median_snr = hdr['SNR'] # Median SNR
-	bjd = hdr['HIERARCH %s DRS BJD' % (tel[:3])] # Barycentric Julian Day
-	try: b_v = hdr[0].header['HIERARCH %s DRS CAII B-V' % tel[:3]]
-	except: b_v = None
+	obj = files['obj']
+	date = files['date']
+
+	bjd = header['HIERARCH %s DRS BJD' % obs] # Barycentric Julian Day
+
+	# median snr in all orders
+	median_snr = header['SNR'] # Median SNR
 
 	# SNR in all orders for HARPS
-	if tel[:3] == 'ESO': orders = 71
-	if tel[:3] == 'TNG': orders = 68
-	snr = ["%0.1f" % hdr['HIERARCH %s DRS SPE EXT SN%s' % (tel[:3],orders)]]
+	if obs == 'ESO': orders = 72
+	if obs == 'TNG': orders = 69
+	snr = [float("%0.1f" % header['HIERARCH %s DRS SPE EXT SN%s' % (obs,k)]) for k in range(orders)]
 
-	# convert str to float to calculate median
-	median_snr_calc = np.median([float(snr[k]) for k in range(len(snr))]) # not used
+	adp.close()
 
-	#try:
 	ccf_fits = pyfits.open(files['ccf'])
-		#print "CCF file read success"
-	#except:
-		#print "*** ERROR: No ccf file present"
-		#return
 
-	rv = ccf_fits[0].header['HIERARCH %s DRS CCF RVC' % tel[:3]] # [km/s], drift corrected
-	rv_err = ccf_fits[0].header['HIERARCH %s DRS DVRMS' % tel[:3]] # [m/s]
-	berv = ccf_fits[0].header['HIERARCH %s DRS BERV' % tel[:3]] # [km/s]
+	rv = ccf_fits[0].header['HIERARCH %s DRS CCF RVC' % obs] # [km/s], drift corrected
+	rv_err = ccf_fits[0].header['HIERARCH %s DRS DVRMS' % obs] # [m/s]
+
 	ccf_fits.close()
 
 	# RV already corrected for BERV (from CCF file)
 	rv = rv * 1000 # convert to m/s
-	berv = berv * 1000 # convert to m/s
 
-	# Wavelength Doppler shift (to rest frame) correction (BERV already corrected)
+	# Wavelength Doppler shift correction (BERV already corrected)
 	delta_wave = rv * wave_orig / lightspeed
 	wave = wave_orig - delta_wave
 	print "Wavelength Doppler shift (to rest frame) corrected"
 
+	data = {}
 	data['flux'] = flux
 	data['wave'] = wave
 	data['date'] = date
@@ -224,7 +236,7 @@ def load_data_adp(files):
 	data['snr'] = snr
 	data['rv'] = rv
 	data['rv_err'] = rv_err
+	data['instr'] = files['instr']
 	data['data_flg'] = flg
-	data['b-v'] = b_v
 
 	return data

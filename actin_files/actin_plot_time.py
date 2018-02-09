@@ -84,7 +84,7 @@ def plt_time(rdb_file, save_plt=False, rmv_flgs=False):
 
 def plt_time_mlty(rdb_file, save_plt=False, rmv_flgs=False, hdrs=['I_CaII', 'I_Ha', 'I_NaI', 'I_HeI']):
 
-    if rdb_file == None: return
+    if rdb_file is None: return
 
     if type(rdb_file) is list: rdb_file = rdb_file[0]
 
@@ -103,6 +103,10 @@ def plt_time_mlty(rdb_file, save_plt=False, rmv_flgs=False, hdrs=['I_CaII', 'I_H
         print "No indices selected in plt_time_mlty"
         return
 
+    if len(hdrs) == 1:
+        print "Only one index selected, no need for multiplot"
+        return
+
     ind = {} # make new dictionary just for plots
     ind_ids = [] # only the indices in data
     for k in range(len(hdrs)):
@@ -112,7 +116,12 @@ def plt_time_mlty(rdb_file, save_plt=False, rmv_flgs=False, hdrs=['I_CaII', 'I_H
             ind['%s_flg' % hdrs[k]] = data['%s_flg' % hdrs[k]]
             ind_ids.append(hdrs[k])
 
-    if len(ind_ids) == 0: return
+    if len(ind_ids) == 0:
+        print "No index matches the rdb file and hdr option of plt_time_mlty, must have data for one of the following indices: I_CaII, I_Ha, I_NaI or HeI."
+        return
+    if len(ind_ids) == 1:
+        print "Only one index in rdb file, no need for multiplot."
+        return
 
     plot_n = 0
     n_subplots = len(ind_ids)
