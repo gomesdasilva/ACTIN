@@ -34,8 +34,74 @@ def actin_file(file, calc_index, config_file=config_file, save_output=False, lin
     Parameters:
     -----------
     The same as the actin function below but for one file.
+
+    Returns:
+    --------
+    data : dict
+        Dictionary with data returned from fits files.
+
+        Each key is a list with data related to a given measurement date
+        given by the key 'date'.
+
+        The used keys are:
+
+        ==========  ========================================================
+        keys		Description
+        ----------  --------------------------------------------------------
+        obj 		str : Object (target) identification.
+        flux        list : Flux per spectral order per pixel (e2ds) or flux
+                    per pixel (other file types).
+        wave        list : Wavelength per spectral order per pixel (e2ds) or
+                    wavelength per pixel (other file types) [angstroms].
+        blaze       list : Blaze function per spectral order (e2ds).
+                    If blaze file is not found is list of 'ones'. For other
+                    file types this header is not used.
+        snr         {list, None} : SNR per spectral order. None if 'rdb'.
+        median_snr  float : Median SNR of spectrum.
+        date 		str : Date of observation in the fits file format.
+        bjd 		float : Barycentric Julian date of observation [days].
+        rv			float : Radial velocity [m/s].
+        rv_err		float : Error on radial velocity (photon noise) [m/s].
+        instr       str : Instrument identification.
+        data_flg 	str : Flag with value 'noDeblazed' when the blaze file
+                    was not found (and flux_deb is real flux), None
+                    otherwise.
+        file_type   str : Type of file used as input: 'e2ds', 's1d'
+                    (includes 's1d_*_rv'), 'ADP' or 'rdb'.
+        ==========  ========================================================
+
+    index : dict
+        Dictionary containing the parameters related to the calculated spectral
+        indices.
+
+        Each key entry is a list of parameters where the list indices form the
+        rows related to a given spectral index identified by the key 'index'.
+
+        The returned keys are:
+
+        ==========  ========================================================
+        keys		Description
+        ----------  --------------------------------------------------------
+        index 		str : Identification of the spectral index as given in
+                    the configuration file.
+        value 		float : Spectral index value.
+        error 		float : Error of the index calculated by error propa-
+                    gation.
+        snr 		{float, None} : Mean of the SNR at the lines spectral
+                    order if the SNR per order was given as input, median
+                    SNR of spectrum if median SNR given as input, 'None' if
+                    no SNR values given as input.
+        flg 		{str, None} : Flags associated with the index: 'negFlux'
+                    if negative flux detected in any of the lines used to
+                    compute the index, None otherwise.
+        mfrac_neg	list : Maximum fraction of flux with negative values
+                    when taking into account all lines for a given index.
+        ==========  ========================================================
+
+    save_name : str
+        Output rdb filename with path.
     """
-    
+
     print "\n--------------------"
     print "EXECUTING ACTIN_FILE"
     print "--------------------"
@@ -173,7 +239,7 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
     weight : {str, None} (optional)
         Function to weight the integrated flux. If 'blaze' the flux is multiplied by the blaze function, if None (default) the flux is not weighted (default).
     norm : str (optional)
-    	Normalization of the flux: if 'band' the sum is normalized by the bandpass wavelength value in angstroms, if 'npixels' by the number of pixels in the bandpass (default), if 'weight' by the sum of the weight function inside the bandpass, if None the integrated flux is not normalized.
+    	Normalisation of the flux: if 'band' the sum is normalised by the bandpass wavelength value in angstroms, if 'npixels' by the number of pixels in the bandpass (default), if 'weight' by the sum of the weight function inside the bandpass, if None the integrated flux is not normalised.
     """
 
     print "\n#----------------#"

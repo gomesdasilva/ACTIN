@@ -1,7 +1,7 @@
 # ACTIN
 ### Activity Indices Calculator
 
-Reads fits files from HARPS and HARPS-N spectrographs and outputs user defined spectral indices.
+Reads fits files from HARPS and HARPS-N spectrographs, and rdb tables, and outputs user defined spectral indices.
 
 ### Requires the following Python modules:
 - numpy
@@ -31,13 +31,15 @@ Options:
 
 `-obj` str : Object name to override the one from fits files in case the star has multiple names (ex. Proxima, ProximaCen, Gl551). Default is `None`.
 
-`-w` str : Weight used to calculate the flux in the lines. `blaze` uses the blaze function as weight, flux is normalized by the sum of the weight function, `None` the flux is unweighted and normalized by number of pixels.
+`-w` str : Function to weight the integrated flux. If `blaze` the flux is multiplied by the blaze function, if `None` the flux is not weighted (default).
+
+`-n` str : Normalisation of the flux: if `band` the sum is normalised by the bandpass wavelength value in angstroms, if `npixels` by the number of pixels in the bandpass (default), if `weight` by the sum of the weight function inside the bandpass, if `None` the integrated flux is not normalised.
 
 
 ### Example:
 
 `python actin.py ../fits/*/*e2ds_A.fits -i I_CaII I_Ha -s ../output -p same -del True -tl Gl273 Gl581`
 
-This will execute ACTIN for all the subdirectories inside `../fits/` with files ending with `e2ds_A.fits`, calculate the indices `I_CaII` and `I_Ha`, output the data to `../output/star_names`, save spectra of the line regions to the same directory as data, and, before running the code, delete any output file that was previously there, in this case `Gl273_e2ds_actin.rdb` and `Gl581_e2ds_actin.rdb` files. Only fits files belonging to the stars chosen in `-tl` will be read, in this case `Gl273` and `Gl581`.
+This will execute ACTIN for all the subdirectories inside `../fits/` with files ending with `e2ds_A.fits`, calculate the indices `I_CaII` and `I_Ha`, output the data to `../output/star_names`, save spectra of the line regions to the same directory as data, and, before running the code, delete any output file that was previously there, in this case `Gl273_e2ds_actin.rdb` and `Gl581_e2ds_actin.rdb` files. Only fits files belonging to the stars chosen in `-tl` will be read, in this case `Gl273` and `Gl581`. In this case, the flux is not weighted (-w None, default) and is normalised by the number of pixels in the passband (-n npixels, default). 
 
 *Any enquiries or bug reports to João Gomes da Silva, Joao.Silva(at)astro.up.pt*
