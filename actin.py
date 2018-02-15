@@ -279,12 +279,13 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
             output = actin_file(files[k], calc_index, config_file=config_file, save_output=save_output, line_plots=line_plots, obj_name=obj_name, targ_list=targ_list, del_out=del_out, weight=weight, norm=norm)[2]
             output_rdb.append(output)
 
+        output_rdb = list(set(output_rdb)) # remove duplicates in list
+
         # save plot timeseries
-        if output_rdb and calc_index is not None:
-            output_rdb = list(set(output_rdb)) # remove duplicates in list
+        if output_rdb[0] is not None and calc_index is not None:
             for k in range(len(output_rdb)):
                 plot.plt_time(output_rdb[k], rmv_flgs=False, save_plt=True)
-                plot.plt_time_mlty(output_rdb[k], rmv_flgs=False, save_plt=True)
+                plot.plt_time_mlty(output_rdb[k], rmv_flgs=False, save_plt=True
 
     elapsed_time = time.time() - start_time
 
