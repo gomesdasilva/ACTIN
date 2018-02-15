@@ -12,7 +12,7 @@
 # - ln_win: Window range centred at ‘ln_ctr’ to compute flux, in angstroms.
 #
 # Note: More comments can be added by starting a new line with “#”.
-# Note: Empty lines before the table headers are not read.
+# Note: Empty lines before table headers are not read.
 
 ind_id	ind_var	ln_id	ln_c	ln_ctr		ln_win	bandtype
 ----------------------------------------------------------------

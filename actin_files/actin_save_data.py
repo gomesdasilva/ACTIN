@@ -50,6 +50,34 @@ def check_duplicate(obj, date, file_type, out_dir):
 
 
 def line_plot(wave, flux, obj, date, ln_id, ln_ctr, ln_win, bandfunc, file_type, out_dir):
+	"""
+	Saves spectral lines plots.
+
+	Parameters:
+	-----------
+	wave, flux : lists
+		Wavelength [angstroms] and flux.
+	obj : str
+		Object identification.
+	date : str
+		Date of observations in fits file format.
+	ln_id : str
+		Spectral line identification.
+	ln_ctr, ln_win : float
+		Spectral line centre and bandpass [angstroms].
+	bandfunc : {list, None}
+		Bandpass function, None if using a square function, list if using triangular.
+	file_type : str
+		Identification of the type of file used. Options are 'e2ds', 's1d',
+		'ADP', and 'rdb'.
+	out_dir : str
+		Output directory to save the plots.
+
+	Returns:
+	--------
+	Plots of the regions around the spectral lines used to calculate the
+	indices. The plots are saved in the directory: 'out_dir'/'obj'.
+	"""
 
 	width, height = func.plot_params(6, 3.5)
 
@@ -68,20 +96,17 @@ def line_plot(wave, flux, obj, date, ln_id, ln_ctr, ln_win, bandfunc, file_type,
 	plt.figure(figsize=(width, height))
 	plt.plot(wave, flux/max(flux_reg),'k-')
 
-	if bandfunc != None:
-		#plt.plot(wave[(bandfunc > 0)], flux[(bandfunc > 0)]/max(flux),'r-')
-		plt.plot(wave[(bandfunc > 0)], bandfunc[(bandfunc > 0)],'r-', linewidth=1.5)
+	if bandfunc is not None:
+		plt.plot(wave[(bandfunc > 0)], bandfunc[(bandfunc > 0)],'b-', linewidth=1.5)
 
 	plt.xlim(wave_min, wave_max)
 
-	plt.ylim(0., 1.3)#max(flux_reg) + max(flux_reg) / 4.)
-	#plt.ylim(-0.3,1.5)
+	plt.ylim(0., 1.3)
 
-	if bandfunc == None:
-		#plt.plot(wave_win, flux_win/max(flux),'r-')
-		plt.axvline(ln_ctr, color='r', ls='--', linewidth=1.5)
-		plt.axvline(win_min, color='r', ls='-', linewidth=1.5)
-		plt.axvline(win_max, color='r', ls='-', linewidth=1.5)
+	if bandfunc is None:
+		plt.axvline(ln_ctr, color='b', ls='--', linewidth=1.5)
+		plt.axvline(win_min, color='b', ls='-', linewidth=1.5)
+		plt.axvline(win_max, color='b', ls='-', linewidth=1.5)
 
 	plt.ylabel('%s flux' % ln_id)
 	plt.xlabel('Wavelength [Ang]')
@@ -107,10 +132,7 @@ def line_plot(wave, flux, obj, date, ln_id, ln_ctr, ln_win, bandfunc, file_type,
 
 def save_data(data, index, out_dir):
 	"""
-	Saves data from specha to rdb.
-
-		- Automatically detects if reading from 1d or 2d fits files.
-		- Automatically detects number of selected indices.
+	Saves output data to rdb file.
 
 	Parameters:
 	-----------
@@ -129,6 +151,8 @@ def save_data(data, index, out_dir):
 		median_snr  float : Median SNR of spectrum.
 		date 		str : Date of observation in the fits file format.
 		bjd 		float : Barycentric Julian date of observation [days].
+		rv			float : Radial velocity [m/s].
+		rv_err		float : Error on radial velocity (photon noise) [m/s].
 		data_flg 	str : Flag with value 'noDeblazed' when the blaze file
 					was not found (and flux_deb is real flux), None
 					otherwise.
@@ -148,16 +172,18 @@ def save_data(data, index, out_dir):
 		----------  --------------------------------------------------------
 		index 		str : Identification of the spectral index as given in
 					the configuration file.
-		value 		float : Computed value for the spectral index.
+		value 		float : Spectral index value.
 		error 		float : Error of the index calculated by error propa-
 					gation.
-		snr 		float, None : Mean of the SNR at the lines spectral
+		snr 		{float, None} : Mean of the SNR at the lines spectral
 					order if the SNR per order was given as input, median
 					SNR of spectrum if median SNR given as input, 'None' if
 					no SNR values given as input.
-		flg 		str, None : Flags associated with the index: 'negFlux'
+		flg 		{str, None} : Flags associated with the index: 'negFlux'
 					if negative flux detected in any of the lines used to
 					compute the index, None otherwise.
+		mfrac_neg	list : Maximum fraction of flux with negative values
+					when taking into account all lines for a given index.
 		==========  ========================================================
 
 	output_dir : str
@@ -165,10 +191,10 @@ def save_data(data, index, out_dir):
 
 	Returns:
 	--------
-		Saves output to .rdb file with name and path given by 'save_name'.
+	Saves output to .rdb file with name and path given by 'save_name'.
 
-		save_name : str
-			Output filename with path.
+	save_name : str
+		Output filename with path.
 	"""
 
 	print "\nSAVING DATA"

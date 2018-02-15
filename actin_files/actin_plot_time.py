@@ -14,10 +14,33 @@ import actin_functions as func
 
 # IMPORTANT: all indices names must start with "I_" in config file
 def plt_time(rdb_file, save_plt=False, rmv_flgs=False):
+    """
+    Saves timeseries plots of the indices identified in the rdb file by
+    starting with 'I_'.
+
+    Parameters:
+    -----------
+    rdb_file : str
+        Output rdb file from ACTIN with path.
+    save_plt : bool (optional)
+        If True the plots are saved in the same directory of 'rdb_file',
+        if False the plots are not saved (default).
+    rmv_flgs : bool (optional)
+        If True, removes values with negative flux flags, if False the
+        these values are included with red colour (default).
+
+    Returns:
+    --------
+    Timeseries plots of the indices selected to be calculated by ACTIN.
+    Output directory is the same as the one the rdb file is located.
+    """
+
     print "\nPLOTTING TIMESERIES"
     print "-------------------"
 
-    if rdb_file == None: return
+    if rdb_file is None:
+        print "*** ERROR: No rdb file given to plot timeseries."
+        return
 
     if type(rdb_file) is list: rdb_file = rdb_file[0]
 
@@ -37,7 +60,7 @@ def plt_time(rdb_file, save_plt=False, rmv_flgs=False):
         if 'I_' in data.keys()[k]:
             ind_ids.append(('_').join(data.keys()[k].split('_')[:2]))
 
-    if len(ind_ids) == 0:
+    if not ind_ids:
         print "No indices detected in %s" % rdb_file
         return
 
@@ -60,7 +83,7 @@ def plt_time(rdb_file, save_plt=False, rmv_flgs=False):
                 N += 1
                 plt.errorbar(bjd[i], ind[ind_ids[k]][i], ind['%s_err' % ind_ids[k]][i], c='k', marker='.',ls='')
             elif ind['%s_flg' % ind_ids[k]][i] != 'None':
-                if rmv_flgs == False:
+                if rmv_flgs is False:
                     N += 1
                     plt.errorbar(bjd[i], ind[ind_ids[k]][i], ind['%s_err' % ind_ids[k]][i], c='r', marker='.',ls='')
                 else: pass
@@ -72,7 +95,7 @@ def plt_time(rdb_file, save_plt=False, rmv_flgs=False):
         plt.xlabel('bjd - 2450000')
         plt.ylabel(ind_ids[k])
 
-        if save_plt == True:
+        if save_plt is True:
             save_name = '%s_%s_%s_time.pdf' % (star, file_type, ind_ids[k])
             plt.savefig(('%s/%s' % (dir,save_name)))
             print "%s timeseries saved to %s/%s" % (ind_ids[k],dir,save_name)
@@ -83,6 +106,30 @@ def plt_time(rdb_file, save_plt=False, rmv_flgs=False):
 
 
 def plt_time_mlty(rdb_file, save_plt=False, rmv_flgs=False, hdrs=['I_CaII', 'I_Ha', 'I_NaI', 'I_HeI']):
+    """
+    Saves timeseries plots of the indices identified in the rdb file by
+    starting with 'I_' in a 'multi-plot' format.
+
+    Parameters:
+    -----------
+    rdb_file : str
+        Output rdb file from ACTIN with path.
+    save_plt : bool (optional)
+        If True the plots are saved in the same directory of 'rdb_file',
+        if False the plots are not saved (default).
+    rmv_flgs : bool (optional)
+        If True, removes values with negative flux flags, if False the
+        these values are included with red colour (default).
+    hdrs : list
+        List of indices to be plotted. If the rdb does not include any
+        index in this list, plot is not saved. If only one index is found
+        in the rdb file, plot is not saved.
+
+    Returns:
+    --------
+    Timeseries multi-plot of the indices selected to be calculated by ACTIN.
+    Output directory is the same as the one the rdb file is located.
+    """
 
     if rdb_file is None: return
 

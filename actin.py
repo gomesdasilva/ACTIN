@@ -27,8 +27,15 @@ config_file = '%s/config_lines.txt' % path
 
 def actin_file(file, calc_index, config_file=config_file, save_output=False, line_plots=False, obj_name=None, targ_list=None, del_out=False, weight=None, norm='npixels'):
     """
-    If 'save_output = false' there is no check of date duplicate and specha executes all functions and gives output
+    Runs ACTIN for one fits file.
+    Accepts files of types: 'e2ds', 's1d', 's1d_*_rv', 'ADP', and 'rdb'.
+    Recognizes fits files from HARPS and HARPS-N instruments.
+
+    Parameters:
+    -----------
+    The same as the actin function below but for one file.
     """
+    
     print "\n--------------------"
     print "EXECUTING ACTIN_FILE"
     print "--------------------"
@@ -123,8 +130,51 @@ def actin_file(file, calc_index, config_file=config_file, save_output=False, lin
     return data, index, save_name
 
 
-# Reads files or list of files of type e2ds, s1d, s1d_rv, adp, rdb
 def actin(files, calc_index, config_file=config_file, save_output=False, line_plots=False, obj_name=None, targ_list=None, del_out=False, weight=None, norm='npixels'):
+    """
+    Runs ACTIN for one or multiple fits files, for one or multiple stars.
+    Accepts files of types: 'e2ds', 's1d', 's1d_*_rv', 'ADP', and 'rdb'.
+    Recognizes fits files from HARPS and HARPS-N instruments.
+
+    Parameters:
+    -----------
+    files : list
+        File(s) to be read by ACTIN. Can be of type 'e2ds', 's1d', 's1d_*_rv', 'ADP', or 'rdb' table.
+    calc_index : list
+        Indices to be calculated. Indices identification must be consistent
+        with the ones given in the configuration file.
+    config_file : str (optional)
+        Configuration file with path. Default is 'config_lines.txt'. If
+        this file is moved from the currect directory, the new path should
+        be given by this option.
+    save_output : {str, False} (optional)
+        Directory to save the output. If False, ACTIN is run but data is
+        not saved (default).
+    line_plots : {str, False} (optional)
+        Directory to save the spectral line plots. If 'same', uses the
+        directory specified in 'save_output'. If False, plots are not saved
+        (default).
+    obj_name : {str, None} (optional)
+        Object name to overide the one from the fits files. Useful in the
+        case where different object names are given in the fits files (ex:
+        Gl551, Proxima, ProximaCen). ACTIN will use this name as the save
+        directory for the output. If None, uses identification from fits
+        (default). NOTE: use this carefully, only if certain that the files
+        belong to the same object.
+    targ_list : {list, None} (optional)
+        List of objects to search the 'files' given as input. ACTIN will run only when the fits files 'obj' id match names in the list. If None,
+        ACTIN runs all 'files' given as input. NOTE: if the 'files' list is
+        very large, it can take some time to run this option.
+    del_out : bool (optional)
+        If True, searchs and deletes all output rdb files belonging to the
+        objects identified in 'files' and previously saved by ACTIN. Usefull
+        when running ACTIN on the same fits files but with different options.
+        If False, ACTIN will search for duplicates in the output rdb file and ignore them if found or add data if there are no duplicates (default).
+    weight : {str, None} (optional)
+        Function to weight the integrated flux. If 'blaze' the flux is multiplied by the blaze function, if None (default) the flux is not weighted (default).
+    norm : str (optional)
+    	Normalization of the flux: if 'band' the sum is normalized by the bandpass wavelength value in angstroms, if 'npixels' by the number of pixels in the bandpass (default), if 'weight' by the sum of the weight function inside the bandpass, if None the integrated flux is not normalized.
+    """
 
     print "\n#----------------#"
     print "# STARTING ACTIN #"
@@ -143,7 +193,6 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
     if del_out is True:
         print "\nSearching output files to delete..."
         err_msg = func.remove_output(files, save_output=save_output, targ_list=targ_list)
-
 
     # Option to make line plots directory the same as the data output dir
     if line_plots == 'same': line_plots = save_output
@@ -186,6 +235,11 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
 
 
 if __name__ == "__main__":
+
+    if len(sys.argv) < 2:
+        print "You haven't specified any arguments. Use -h to get more details on how to use this command."
+        sys.exit(1)
+
     import argparse
 
 	# initiate the parser
