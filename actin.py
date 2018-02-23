@@ -285,7 +285,7 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
         if output_rdb[0] is not None and calc_index is not None:
             for k in range(len(output_rdb)):
                 plot.plt_time(output_rdb[k], rmv_flgs=False, save_plt=True)
-                plot.plt_time_mlty(output_rdb[k], rmv_flgs=False, save_plt=True
+                plot.plt_time_mlty(output_rdb[k], rmv_flgs=False, save_plt=True)
 
     elapsed_time = time.time() - start_time
 
