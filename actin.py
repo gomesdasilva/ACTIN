@@ -276,8 +276,10 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
         # run ACTIN for list of files
         output_rdb = []
         for k in range(len(files)):
-            output = actin_file(files[k], calc_index, config_file=config_file, save_output=save_output, line_plots=line_plots, obj_name=obj_name, targ_list=targ_list, del_out=del_out, weight=weight, norm=norm)[2]
-            output_rdb.append(output)
+            try:
+                output = actin_file(files[k], calc_index, config_file=config_file, save_output=save_output, line_plots=line_plots, obj_name=obj_name, targ_list=targ_list, del_out=del_out, weight=weight, norm=norm)[2]
+                output_rdb.append(output)
+            except: pass
 
         output_rdb = list(set(output_rdb)) # remove duplicates in list
 

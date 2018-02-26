@@ -221,6 +221,21 @@ def load_data_s1d(files):
 		rv, rv_err = None
 		wave = wave_orig
 
+	# If using s1d_*_rv with ccf file
+	elif files['ccf'] and rest_frame == 'rv':
+		ccf_fits = pyfits.open(files['ccf'])
+		print "CCF data read success"
+
+		rv = ccf_fits[0].header['HIERARCH %s DRS CCF RVC' % obs] # [km/s], drift corrected
+		rv_err = ccf_fits[0].header['HIERARCH %s DRS DVRMS' % obs] # [m/s]
+
+		ccf_fits.close()
+		
+		# RV already corrected for BERV (from CCF file)
+		rv = rv * 1000 # convert to m/s
+
+		wave = wave_orig
+
 	# If using s1d need rv to calibrate wavelength
 	elif files['ccf'] is None and rest_frame != 'rv':
 		print "*** ERROR: No ccf file found but required to calibrate wavelength"

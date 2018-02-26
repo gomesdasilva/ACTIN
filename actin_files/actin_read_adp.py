@@ -100,7 +100,7 @@ def read_file_adp(adp_pfile, obj_name=None):
 
 	adp.close()
 
-	ccf_pfile = glob.glob('%s/%s.%s_ccf_*.fits' % (folder,instr,date))[0]
+	ccf_pfile = glob.glob('%s/%s.%s*_ccf_*.fits' % (folder,instr,date[:-2]))[0]
 
 	print "CCF FILE:\t%s" % ccf_pfile.split('/')[-1]
 
