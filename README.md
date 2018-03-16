@@ -19,7 +19,9 @@ The `config_lines.txt` file is the line configuration file (instructions inside)
 This file is available from the directory each OS uses for storing user data (ACTIN must be run once, before the file becomes available*):
 
 For OSX: `~/Library/Application Support/<AppName>`
+
 For Windows: `C:\Documents and Settings\<User>\Application Data\Local Settings\<AppAuthor>\<AppName>` or possibly `C:\Documents and Settings\<User>\Application Data\<AppAuthor>\<AppName>`
+
 For Linux: `~/.local/share/<AppName>`
 
 * Use `actin -h` as the first run.
