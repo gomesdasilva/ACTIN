@@ -10,6 +10,7 @@
 # - ln_c: Constant multiplied to the line flux.
 # - ln_ctr: Line centre in angstroms.
 # - ln_win: Window range centred at ‘ln_ctr’ to compute flux, in angstroms.
+# - bandtype: Type of integration function: ‘sq’ for square, ‘tri’ for triangular.
 #
 # Note: More comments can be added by starting a new line with “#”.
 # Note: Empty lines before table headers are not read.

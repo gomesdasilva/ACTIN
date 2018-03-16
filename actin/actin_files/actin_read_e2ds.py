@@ -153,6 +153,7 @@ def read_file_e2ds(e2ds_pfile, obj_name=None):
 		return
 
 	folder = '/'.join(e2ds_pfile.split('/')[:-1])
+
 	e2ds_file = '/'.join(e2ds_pfile.split('/')[-1:])
 	e2ds_file_info = e2ds_file.split('_')[0]
 
@@ -225,7 +226,10 @@ def read_file_e2ds(e2ds_pfile, obj_name=None):
 		print "Looking for other blaze files in the folder..."
 		blaze_pfile = check_for_calib_files(e2ds[0].header,'blaze',folder,dif_time_max=1.0)
 
-	ccf_pfile = glob.glob("%s/%s_ccf_*_A.fits" % (folder,e2ds_file_info))[0]
+	if not folder:
+		ccf_pfile = glob.glob("%s_ccf_*_A.fits" % (e2ds_file_info))[0]
+	if folder:
+		ccf_pfile = glob.glob("%s/%s_ccf_*_A.fits" % (folder,e2ds_file_info))[0]
 
 	print "CCF FILE:\t%s" % ccf_pfile.split('/')[-1]
 

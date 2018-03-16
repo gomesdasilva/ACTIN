@@ -100,7 +100,10 @@ def read_file_s1d(s1d_pfile, obj_name=None):
 
 	date = s1d_file_info[6:]
 
-	ccf_pfile = glob.glob('%s/%s_ccf_*.fits' % (folder,s1d_file_info))[0]
+	if not folder:
+		ccf_pfile = glob.glob('%s_ccf_*.fits' % (s1d_file_info))[0]
+	if folder:
+		ccf_pfile = glob.glob('%s/%s_ccf_*.fits' % (folder,s1d_file_info))[0]
 
 	print "CCF FILE:\t%s" % ccf_pfile.split('/')[-1]
 
@@ -230,7 +233,7 @@ def load_data_s1d(files):
 		rv_err = ccf_fits[0].header['HIERARCH %s DRS DVRMS' % obs] # [m/s]
 
 		ccf_fits.close()
-		
+
 		# RV already corrected for BERV (from CCF file)
 		rv = rv * 1000 # convert to m/s
 

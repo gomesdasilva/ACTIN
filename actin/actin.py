@@ -6,6 +6,10 @@ import time
 import numpy as np
 import astropy.io.fits as pyfits
 
+import os.path
+import pkg_resources
+import appdirs
+
 path = os.path.dirname(os.path.realpath(__file__)) # directory of actin.py
 
 # location of ACTIN files:
@@ -284,7 +288,7 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
         output_rdb = list(set(output_rdb)) # remove duplicates in list
 
         # save plot timeseries
-        if output_rdb[0] is not None and calc_index is not None:
+        if output_rdb and output_rdb[0] is not None and calc_index is not None:
             for k in range(len(output_rdb)):
                 plot.plt_time(output_rdb[k], rmv_flgs=False, save_plt=True)
                 plot.plt_time_mlty(output_rdb[k], rmv_flgs=False, save_plt=True)
@@ -303,7 +307,10 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
     return
 
 
-if __name__ == "__main__":
+def main():
+    """
+    Main function, call actin function with arguments from terminal.
+    """
 
     if len(sys.argv) < 2:
         print "You haven't specified any arguments. Use -h to get more details on how to use this command."
@@ -319,9 +326,9 @@ if __name__ == "__main__":
 
     parser.add_argument('--index', '-i', help="Index id to calculate as designated by 'ind_id' in config_index.txt.", nargs='+', default=None)
 
-    parser.add_argument('--save_data', '-s', help='Path to output directory of data table, or False (default).', default=False)#, type=lambda x: (str(x).lower() == 'true'))
+    parser.add_argument('--save_data', '-s', help='Path to output directory of data table, or False (default).', default=False)
 
-    parser.add_argument('--save_plots', '-p', help='Path to output directory of line plots, or False (default)', default=False)#, type=lambda x: (str(x).lower() == 'true'))
+    parser.add_argument('--save_plots', '-p', help='Path to output directory of line plots, or False (default)', default=False)
 
     parser.add_argument('--obj_name', '-obj', help='Give target a name that overides the one from the fits files.', default=None)
 
@@ -336,4 +343,34 @@ if __name__ == "__main__":
 	# read arguments from the command lines
     args = parser.parse_args()
 
-    actin(files=args.files, calc_index=args.index, save_output=args.save_data, line_plots=args.save_plots, obj_name=args.obj_name, targ_list=args.targ_list, del_out=args.del_out, weight=args.weight, norm=args.norm)
+    cfg_file = get_config()
+
+    actin(files=args.files, calc_index=args.index, config_file=cfg_file, save_output=args.save_data, line_plots=args.save_plots, obj_name=args.obj_name, targ_list=args.targ_list, del_out=args.del_out, weight=args.weight, norm=args.norm)
+
+
+def get_config():
+    """
+    Read configuration file and return its contents
+    """
+    cfg_dir = appdirs.user_config_dir('ACTIN')
+    if not os.path.exists(cfg_dir):
+        os.makedirs(cfg_dir)
+    cfg_file = os.path.join(cfg_dir, 'config_lines.txt')
+    if not os.path.isfile(cfg_file):
+        create_user_config(cfg_file)
+
+    return cfg_file #data
+
+
+def create_user_config(cfg_file):
+    """
+    Create the user's config file
+    """
+    source = pkg_resources.resource_stream(__name__, 'config_lines.txt')
+    with open(cfg_file, 'w') as dest:
+        dest.writelines(source)
+
+
+if __name__ == "__main__":
+
+    main()

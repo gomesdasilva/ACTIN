@@ -64,6 +64,10 @@ def check_lines(wave, sel_lines):
 		ln_ctr = sel_lines['ln_ctr'][k]
 		ln_win = sel_lines['ln_win'][k]
 
+		if ln_win == 0:
+			print "*** ERROR: line %s bandwidth is zero" % ln_id
+			exit()
+
 		min_wave = ln_ctr - ln_win/2.
 		max_wave = ln_ctr + ln_win/2.
 
@@ -345,6 +349,11 @@ def calc_ind(sel_lines):
 		# Mean snr of lines:
 		try: snr_ind = np.mean([float(snr[k]) for k in range(len(snr))])
 		except: snr_ind = None
+
+		for k in range(len(var)):
+			if 'L' not in var[k] and 'R' not in var[k]:
+				print "*** ERROR: 'ind_var' variable (in configuration file config_lines.txt) must start with either an 'L' for core line or 'R' for reference line. Value given was '%s'" % var[k]
+				return
 
 		# Add line variables for numerator or denominator:
 		num = [flux[k] for k in range(len(var)) if 'L' in var[k]]
