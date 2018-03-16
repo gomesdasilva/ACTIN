@@ -24,7 +24,7 @@ For Windows: `C:\Documents and Settings\<User>\Application Data\Local Settings\<
 
 For Linux: `~/.local/share/<AppName>`
 
-* Use `actin -h` as the first run.
+*Use `actin -h` as the first run.
 
 ### Quick start:
 
