@@ -1,7 +1,7 @@
 # ACTIN
 ### Activity Indices Calculator
 
-Reads fits files from HARPS and HARPS-N spectrographs, and rdb tables, and outputs user defined spectral indices.
+Reads fits files from HARPS and HARPS-N spectrographs and rdb tables, and outputs user defined spectral indices.
 
 ### Requires the following Python modules:
 - numpy
