@@ -6,7 +6,7 @@ import time
 import numpy as np
 import astropy.io.fits as pyfits
 
-import os.path
+#import os.path
 import pkg_resources
 import appdirs
 
@@ -321,6 +321,7 @@ def main():
     """
     Main function, call actin function with arguments from terminal.
     """
+    cfg_file = get_config()
 
     if len(sys.argv) < 2:
         print "You haven't specified any arguments. Use -h to get more details on how to use this command."
@@ -353,8 +354,6 @@ def main():
 	# read arguments from the command lines
     args = parser.parse_args()
 
-    cfg_file = get_config()
-
     actin(files=args.files, calc_index=args.index, config_file=cfg_file, save_output=args.save_data, line_plots=args.save_plots, obj_name=args.obj_name, targ_list=args.targ_list, del_out=args.del_out, weight=args.weight, norm=args.norm)
 
 
@@ -369,7 +368,7 @@ def get_config():
     if not os.path.isfile(cfg_file):
         create_user_config(cfg_file)
 
-    return cfg_file #data
+    return cfg_file
 
 
 def create_user_config(cfg_file):

@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+import os
+import subprocess
+
 try: from setuptools import setup
 except: from distutils.core import setup
 
@@ -19,3 +22,6 @@ setup(name = 'actin',
       include_package_data = True,
       install_requires = ['appdirs']
       )
+
+# Need to call ACTIN after installing to create user config file
+subprocess.call(["actin", "-h"], stdout=open(os.devnull, 'wb'))

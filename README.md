@@ -16,7 +16,7 @@ Copy the github repository to a directory of your choice and install via `python
 
 The `config_lines.txt` file is the line configuration file (instructions inside). This file is used to add line parameters to calculate any index as long as the line cores and bandpasses are inside the spectral range and spectral orders range (e2ds files) of the spectrograph. ACTIN will check this at start and give an error message if line parameters don't match the spectra.
 
-This file is available from the directory each OS uses for storing user data (ACTIN must be run once, before the file becomes available*):
+This file is available from the directory each OS uses for storing user data:
 
 For OSX: `~/Library/Application Support/<AppName>`
 
@@ -24,7 +24,6 @@ For Windows: `C:\Documents and Settings\<User>\Application Data\Local Settings\<
 
 For Linux: `~/.local/share/<AppName>`
 
-*Use `actin -h` as the first run.
 
 ### Quick start:
 
