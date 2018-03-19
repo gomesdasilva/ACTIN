@@ -132,6 +132,7 @@ def read_file_e2ds(e2ds_pfile, obj_name=None):
 		blaze 		{str, None} : Blaze fits filename with path if found,
 					None otherwise.
 		ccf 		str : CCF fits filename with path.
+		bis			str : BIS fits filename with path.
 		instr		str : Instrument identification.
 		obs			str : Code related to instrument to be used in fits
 					headers.
@@ -226,26 +227,55 @@ def read_file_e2ds(e2ds_pfile, obj_name=None):
 		print "Looking for other blaze files in the folder..."
 		blaze_pfile = check_for_calib_files(e2ds[0].header,'blaze',folder,dif_time_max=1.0)
 
+	# If already in the fits files folder
 	if not folder:
-		ccf_pfile = glob.glob("%s_ccf_*_A.fits" % (e2ds_file_info))[0]
+		# Test CCF file
+		try:
+			ccf_pfile = glob.glob("%s_ccf_*_A.fits" % (e2ds_file_info))[0]
+			ccf_fits = pyfits.open(ccf_pfile)
+			ccf_fits.close()
+			print "CCF FILE:\t%s" % ccf_pfile.split('/')[-1]
+		except:
+			print "*** ERROR: CCF file not found but required for wavelength calibration"
+			return
+		# Test BIS file
+		try:
+			bis_pfile = glob.glob("%s_bis_*_A.fits" % (e2ds_file_info))[0]
+			bis_fits = pyfits.open(bis_pfile)
+			bis_fits.close()
+			print "BIS FILE:\t%s" % bis_pfile.split('/')[-1]
+		except:
+			print "*** WARNING: BIS file not found"
+			bis_pfile = None
+
+	# If outside the fits files folder
 	if folder:
-		ccf_pfile = glob.glob("%s/%s_ccf_*_A.fits" % (folder,e2ds_file_info))[0]
+		# Test CCF file
+		try:
+			ccf_pfile = glob.glob("%s/%s_ccf_*_A.fits" % (folder,e2ds_file_info))[0]
+			ccf_fits = pyfits.open(ccf_pfile)
+			ccf_fits.close()
+			print "CCF FILE:\t%s" % ccf_pfile.split('/')[-1]
+		except:
+			print "*** ERROR: CCF file not found but required for wavelength calibration"
+			return
+		# Test BIS file
+		try:
+			bis_pfile = glob.glob("%s/%s_bis_*_A.fits" % (folder,e2ds_file_info))[0]
+			bis_fits = pyfits.open(bis_pfile)
+			bis_fits.close()
+			print "BIS FILE:\t%s" % bis_pfile.split('/')[-1]
+		except:
+			print "*** WARNING: BIS file not found"
+			bis_pfile = None
 
-	print "CCF FILE:\t%s" % ccf_pfile.split('/')[-1]
-
-	# Test ccf file
-	try:
-		ccf_fits = pyfits.open(ccf_pfile)
-		ccf_fits.close()
-	except:
-		print "*** ERROR: Cannot read ccf file"
-		return
 
 	files = {}
 	files['e2ds'] = e2ds_pfile
 	files['wave'] = wave_pfile
 	files['blaze'] = blaze_pfile
 	files['ccf'] = ccf_pfile
+	files['bis'] = bis_pfile
 	files['instr'] = instr
 	files['obs'] = obs
 	files['date'] = date
@@ -274,12 +304,13 @@ def load_data_e2ds(files):
 		==========  ========================================================
 		keys		Description
 		----------  --------------------------------------------------------
-		e2ds 		str : e2ds fits file name with path.
-		wave 		{str, None} : Wave fits file name with path, None if not
+		e2ds 		str : e2ds fits filename with path.
+		wave 		{str, None} : Wave fits filename with path, None if not
 					present.
-		blaze 		{str, None} : Blaze fits file name with path, None if
+		blaze 		{str, None} : Blaze fits filename with path, None if
 					not present.
-		ccf 		str : CCF fits file name with path.
+		ccf 		str : CCF fits filename with path.
+		bis			str : BIS fits filename with path.
 		instr		str : Instrument identification.
 		obs			str : Code related to instrument to be used in fits
 					headers.
@@ -309,8 +340,16 @@ def load_data_e2ds(files):
 		obj 		str : Object identification.
 		date 		str : Date of observation in the fits file format.
 		bjd 		float : Barycentric Julian date of observation [days].
-		rv 			float : Radial velocity corrected for BERV [m/s].
-		rv_err 		float : Error on radial velocity [m/s].
+		rv			float : Radial velocity [m/s] (if CCF file available).
+        rv_err		float : Error on radial velocity (photon noise) [m/s]
+                    (if CCF file available).
+        fwhm		float : Full-Width-at-Half-Maximum of the CCF line
+                    profile [m/s] (if CCF file available).
+        cont		float : Contrast of the CCF line profile [%] (if CCF
+                    file available).
+        bis			float : Bisector Inverse Span of the CCF line profile
+                    [m/s] (if BIS file available).
+        noise		float : CCF noise [m/s] (if CCF file available).
 		instr		str : Instrument identification.
 		data_flg 	str : Flag with value 'noDeblazed' when the blaze file
 					is not found, None otherwise.
@@ -327,12 +366,25 @@ def load_data_e2ds(files):
 	flg = None
 
 	obs = files['obs']
+	obj = files['obj']
+	date = files['date'] # date as in the fits filename
 
+	# Reading e2ds file
 	e2ds = pyfits.open(files['e2ds'])
 
 	flux = np.asarray(e2ds[0].data)
 	print "Flux data read success"
 
+	bjd = e2ds[0].header['HIERARCH %s DRS BJD' % (obs)]
+
+	e2ds_file = "/".join(files['e2ds'].split("/")[-1:])
+	e2ds_file_info = e2ds_file.split('_')[0]
+
+	snr = [float("%0.1f" % e2ds[0].header['HIERARCH %s DRS SPE EXT SN%s' % (obs,k)]) for k in range(len(flux))] # SNR in all orders
+
+	e2ds.close()
+
+	# Reading wave file
 	if files['wave'] is not None:
 		wave_fits = pyfits.open(files['wave'])
 		wave_orig = wave_fits[0].data
@@ -343,6 +395,7 @@ def load_data_e2ds(files):
 		wave_orig = calc_wave(files['e2ds'],obs)
 		wave_orig = np.asarray(wave_orig)
 
+	# Reading blaze file
 	if files['blaze'] is not None:
 		blaze_fits = pyfits.open(files['blaze'])
 		blaze = np.asarray(blaze_fits[0].data)
@@ -354,26 +407,30 @@ def load_data_e2ds(files):
 		blaze = np.ones([len(flux),len(flux[0])])
 		flg = 'noDeblazed'
 
+	# Reading CCF file
 	ccf_fits = pyfits.open(files['ccf'])
-	print "CCF data read success"
-
-	obj = files['obj']
-	date = files['date'] # date as in the fits filename
-
-	bjd = e2ds[0].header['HIERARCH %s DRS BJD' % (obs)]
-
-	e2ds_file = "/".join(files['e2ds'].split("/")[-1:])
-	e2ds_file_info = e2ds_file.split('_')[0]
-
-	snr = [float("%0.1f" % e2ds[0].header['HIERARCH %s DRS SPE EXT SN%s' % (obs,k)]) for k in range(len(flux))] # SNR in all orders
-
-	e2ds.close()
 
 	rv = ccf_fits[0].header['HIERARCH %s DRS CCF RVC' % obs] # [km/s], drift corrected
 	rv_err = ccf_fits[0].header['HIERARCH %s DRS DVRMS' % obs] # [m/s]
 	berv = ccf_fits[0].header['HIERARCH %s DRS BERV' % obs] # [km/s]
 
+	fwhm = ccf_fits[0].header['HIERARCH %s DRS CCF FWHM' % obs] # [km/s]
+	cont = ccf_fits[0].header['HIERARCH %s DRS CCF CONTRAST' % obs] # [%]
+	ccf_noise = ccf_fits[0].header['HIERARCH %s DRS CCF NOISE' % obs] # [km/s]
+	print "CCF data read success"
+
 	ccf_fits.close()
+
+	# Reading BIS file
+	if files['bis'] is not None:
+		bis_fits = pyfits.open(files['bis'])
+		bis = bis_fits[0].header['HIERARCH %s DRS BIS SPAN' % obs] # [km/s]
+		print "BIS data read success"
+	elif files['bis'] is None:
+		print "*** WARNING: No BIS data available"
+		bis = None
+
+	bis_fits.close()
 
 	# Median SNR of all orders
 	median_snr = np.median(snr)
@@ -381,6 +438,12 @@ def load_data_e2ds(files):
 	# RV already corrected for BERV (from CCF file)
 	rv = rv * 1000 # convert to m/s
 	berv = berv * 1000 # convert to m/s
+
+	fwhm = fwhm * 1000 # convert to m/s
+	ccf_noise = ccf_noise * 1000 # convert to m/s
+
+	if bis is not None:
+		bis = bis * 1000 # convert to m/s
 
 	# Wavelength Doppler shift (to rest frame) and BERV correction
 	delta_wave = (rv - berv) * wave_orig / lightspeed
@@ -398,6 +461,10 @@ def load_data_e2ds(files):
 	data['bjd'] = bjd # [days]
 	data['rv'] = rv # [m/s]
 	data['rv_err'] = rv_err # [m/s]
+	data['fwhm'] = fwhm # [m/s]
+	data['cont'] = cont
+	data['bis'] = bis # [m/s]
+	data['noise'] = ccf_noise # [m/s]
 	data['instr'] = files['instr']
 	data['data_flg'] = flg
 

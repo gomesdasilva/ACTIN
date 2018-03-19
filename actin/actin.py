@@ -64,8 +64,16 @@ def actin_file(file, calc_index, config_file=config_file, save_output=False, lin
         median_snr  float : Median SNR of spectrum.
         date 		str : Date of observation in the fits file format.
         bjd 		float : Barycentric Julian date of observation [days].
-        rv			float : Radial velocity [m/s].
-        rv_err		float : Error on radial velocity (photon noise) [m/s].
+        rv			float : Radial velocity [m/s] (if CCF file available).
+        rv_err		float : Error on radial velocity (photon noise) [m/s]
+                    (if CCF file available).
+        fwhm		float : Full-Width-at-Half-Maximum of the CCF line
+                    profile [m/s] (if CCF file available).
+        cont		float : Contrast of the CCF line profile [%] (if CCF
+                    file available).
+        bis			float : Bisector Inverse Span of the CCF line profile
+                    [m/s] (if BIS file available).
+        noise		float : CCF noise [m/s] (if CCF file available).
         instr       str : Instrument identification.
         data_flg 	str : Flag with value 'noDeblazed' when the blaze file
                     was not found (and flux_deb is real flux), None
@@ -202,7 +210,7 @@ def actin_file(file, calc_index, config_file=config_file, save_output=False, lin
 
 def actin(files, calc_index, config_file=config_file, save_output=False, line_plots=False, obj_name=None, targ_list=None, del_out=False, weight=None, norm='npixels'):
     """
-    Runs ACTIN for one or multiple fits files, for one or multiple stars.
+    Runs 'actin_file' function for one or multiple fits files, for one or multiple stars.
     Accepts files of types: 'e2ds', 's1d', 's1d_*_rv', 'ADP', and 'rdb'.
     Recognizes fits files from HARPS and HARPS-N instruments.
 
@@ -244,6 +252,8 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
         Function to weight the integrated flux. If 'blaze' the flux is multiplied by the blaze function, if None (default) the flux is not weighted (default).
     norm : str (optional)
     	Normalisation of the flux: if 'band' the sum is normalised by the bandpass wavelength value in angstroms, if 'npixels' by the number of pixels in the bandpass (default), if 'weight' by the sum of the weight function inside the bandpass, if None the integrated flux is not normalised.
+
+    NOTE: See 'Returns' of 'actin_file' function abose for the returns.
     """
 
     print "\n#----------------#"
