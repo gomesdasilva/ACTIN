@@ -253,7 +253,7 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
     norm : str (optional)
     	Normalisation of the flux: if 'band' the sum is normalised by the bandpass wavelength value in angstroms, if 'npixels' by the number of pixels in the bandpass (default), if 'weight' by the sum of the weight function inside the bandpass, if None the integrated flux is not normalised.
 
-    NOTE: See 'Returns' of 'actin_file' function abose for the returns.
+    NOTE: See 'Returns' of 'actin_file' function above for the returns.
     """
 
     print "\n#----------------#"
@@ -355,6 +355,8 @@ def main():
     args = parser.parse_args()
 
     actin(files=args.files, calc_index=args.index, config_file=cfg_file, save_output=args.save_data, line_plots=args.save_plots, obj_name=args.obj_name, targ_list=args.targ_list, del_out=args.del_out, weight=args.weight, norm=args.norm)
+
+    print "Config file path:\t%s" % os.path.split(cfg_file)[0]
 
 
 def get_config():
