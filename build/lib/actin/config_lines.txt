@@ -1,0 +1,34 @@
+# INSTRUCTIONS:
+# -------------
+# Spectral line information can be added to the table below by using tab separated values.
+# Each line must be associated to an index and have a unique id and ‘ind_var’ (see below).
+#
+# The columns are:
+# - ind_id: Identification of the index to which the line ‘ln_id’ belongs. Must start with ‘I_’.
+# - ind_var: Variable of the line in the index equation, ‘L1’, ’L2’ for core lines, ‘R1’, ‘R2’ for reference lines.
+# - ln_id: Line unique identification.
+# - ln_c: Constant multiplied to the line flux.
+# - ln_ctr: Line centre in angstroms.
+# - ln_win: Window range centred at ‘ln_ctr’ to compute flux, in angstroms.
+# - bandtype: Type of integration function: ‘sq’ for square, ‘tri’ for triangular.
+#
+# Note: More comments can be added by starting a new line with “#”.
+# Note: Empty lines before table headers are not read.
+
+ind_id	ind_var	ln_id	ln_c	ln_ctr		ln_win	bandtype
+----------------------------------------------------------------
+I_CaII	L1	CaIIH	1	3933.664	1.09	tri
+I_CaII	L2	CaIIK	1	3968.470	1.09	tri
+I_CaII	R1	CaIIR1	1	3901.070	20.0	sq
+I_CaII	R2	CaIIR2	1	4001.070	20.0	sq
+I_NaI	L1	NaID1	1	5895.920	0.5	sq
+I_NaI	L2	NaID2	1	5889.950	0.5	sq
+I_NaI	R1	NaIR1	1	5805.000	10.0	sq
+I_NaI	R2	NaIR2	1	6097.000	20.0	sq
+I_Ha	L1	Ha	1	6562.808	1.6	sq
+I_Ha	R1	HaR1	1	6550.870	10.75	sq
+I_Ha	R2	HaR2	1	6580.310	8.75	sq
+I_HeI	L1	HeI	1	5875.620	0.4	sq
+I_HeI	R1	HeIR1	1	5869.000	5.0	sq
+I_HeI	R2	HeIR2	1	5881.000	5.0	sq
+
