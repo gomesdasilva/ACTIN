@@ -124,7 +124,7 @@ def actin_file(file, calc_index, config_file=config_file, save_output=False, lin
     if targ_list is not None:
         targ_test = func.check_targ(file, targets=targ_list)
         if targ_test is False:
-            print "*** ERROR: actin: %s does not belong to any star in the targets list." % file
+            print "*** ERROR: %s does not belong to any star in the targets list." % file
             return
 
     data = {}
