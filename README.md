@@ -46,7 +46,7 @@ Options:
 
 `-tl` list : List of stars to select from `files`. Default is `None`.
 
-`-del` bool : If `True` deletes output file for the same star(s) and file type. 
+`-del` bool : If `True` deletes output file for the same star(s) and file type. Default is `False`.
 
 `-obj` str : Object name to override the one from fits files in case the star has multiple names (ex. Proxima, ProximaCen, Gl551). Default is `None`.
 
@@ -54,7 +54,7 @@ Options:
 
 `-n` str : Normalisation of the flux: if `band` the sum is normalised by the bandpass wavelength value in angstroms, if `npixels` by the number of pixels in the bandpass (default), if `weight` by the sum of the weight function inside the bandpass, if `None` the integrated flux is not normalised.
 
-`-cfg` bool : If `True` gives the path to the configuration file.
+`-cfg` bool : If `True` gives the path to the configuration file. Default is `False`.
 
 
 ### Example:
