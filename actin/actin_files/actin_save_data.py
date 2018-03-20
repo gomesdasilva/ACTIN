@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys,os
+import sys, os
 import pylab as plt
 import numpy as np
 
@@ -34,7 +34,8 @@ def check_duplicate(obj, date, file_type, out_dir):
 
 	if obj is None or date is None or out_dir is None: return
 
-	file_pname = '%s/%s/%s_%s_actin.rdb' % (out_dir, obj, obj, file_type)
+	file_name = "%s_%s_actin.rdb" % (obj, file_type)
+	file_pname = os.path.join(out_dir, obj, file_name)
 	if os.path.isfile(file_pname):
 
 		rdb_data = func.read_rdb(file_pname)[0]
@@ -116,15 +117,14 @@ def line_plot(wave, flux, obj, date, ln_id, ln_ctr, ln_win, bandfunc, file_type,
 		obj = obj[0]
 		date = date[0]
 
-	save_name = '%s_%s_%s_win.pdf' % (date, file_type, ln_id)
+	save_name = '%s_%s_%s_%s_win.pdf' % (obj, date, file_type, ln_id)
 
 	if not os.path.isdir(out_dir):
 		os.makedirs(out_dir)
-	if not os.path.isdir('%s/%s' % (out_dir, obj)):
-		os.mkdir('%s/%s' % (out_dir, obj))
+	if not os.path.isdir(os.path.join(out_dir, obj)):
+		os.mkdir(os.path.join(out_dir, obj))
 
-	path = '%s/%s' % (out_dir, obj)
-	plt.savefig('%s/%s' % (path, save_name))
+	plt.savefig(os.path.join(out_dir, obj, save_name))
 	plt.close()
 
 	return
@@ -151,8 +151,16 @@ def save_data(data, index, out_dir):
 		median_snr  float : Median SNR of spectrum.
 		date 		str : Date of observation in the fits file format.
 		bjd 		float : Barycentric Julian date of observation [days].
-		rv			float : Radial velocity [m/s].
-		rv_err		float : Error on radial velocity (photon noise) [m/s].
+		rv			float : Radial velocity [m/s] (if CCF file available).
+		rv_err		float : Error on radial velocity (photon noise) [m/s]
+					(if CCF file available).
+		fwhm		float : Full-Width-at-Half-Maximum of the CCF line
+                    profile [m/s] (if CCF file available).
+        cont		float : Contrast of the CCF line profile [%] (if CCF
+                    file available).
+        bis			float : Bisector Inverse Span of the CCF line profile
+                    [m/s] (if BIS file available).
+        noise		float : CCF noise [m/s] (if CCF file available).
 		data_flg 	str : Flag with value 'noDeblazed' when the blaze file
 					was not found (and flux_deb is real flux), None
 					otherwise.
@@ -208,14 +216,14 @@ def save_data(data, index, out_dir):
 		data['obj'] = data['obj'][0]
 		data['date'] = data['date'][0]
 		data['bjd'] = data['bjd'][0]
-		data_keys = ['obj','date','bjd']
+		data_keys = ['obj', 'date', 'bjd']
 	else:
-		data_keys = ['obj', 'instr', 'date', 'bjd', 'rv', 'rv_err', 'median_snr', 'data_flg']
+		data_keys = ['obj', 'instr', 'date', 'bjd', 'rv', 'rv_err', 'fwhm', 'cont', 'bis', 'noise', 'median_snr', 'data_flg']
 
 	if not os.path.isdir(out_dir):
 		os.makedirs(out_dir)
-	if not os.path.isdir('%s/%s' % (out_dir, data['obj'])):
-		os.mkdir('%s/%s' % (out_dir, data['obj']))
+	if not os.path.isdir(os.path.join(out_dir, data['obj'])):
+		os.mkdir(os.path.join(out_dir, data['obj']))
 
 	# Include index information
 	if index != None:
@@ -246,7 +254,8 @@ def save_data(data, index, out_dir):
 	for k in range(len(keys)):
 		data_save[keys[k]] = [all_data[keys[k]]]
 
-	save_name = "%s/%s/%s_%s_actin.rdb" % (out_dir, all_data['obj'], all_data['obj'], data['file_type'])
+	save_file = "%s_%s_actin.rdb" % (all_data['obj'], data['file_type'])
+	save_name = os.path.join(out_dir, all_data['obj'], save_file)
 
 	if not os.path.isfile(save_name):
 		func.save_rdb(data_save, keys, save_name)

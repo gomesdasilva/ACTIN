@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 
-
 def read(config_file, calc_index):
     """
     Reads data from config file and selects the lines needed for the

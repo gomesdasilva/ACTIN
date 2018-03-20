@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import subprocess
 
 try: from setuptools import setup
 except: from distutils.core import setup
@@ -24,4 +23,5 @@ setup(name = 'actin',
       )
 
 # Need to call ACTIN after installing to create user config file
-subprocess.call(["actin", "-h"], stdout=open(os.devnull, 'wb'))
+# This runs ACTIN and gives location of config file
+os.system('actin -cfg True')

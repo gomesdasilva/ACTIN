@@ -44,12 +44,11 @@ def plt_time(rdb_file, save_plt=False, rmv_flgs=False):
 
     if type(rdb_file) is list: rdb_file = rdb_file[0]
 
-    file_type = rdb_file.split('/')[-1].split('_')[1]
+    folder, file = os.path.split(rdb_file)
+    star = file.split('_')[0]
+    file_type = file.split('_')[1]
 
     width, height = func.plot_params()
-
-    star = rdb_file.split('/')[-1].split('_')[0]
-    dir = ('/').join(rdb_file.split('/')[:-1])
 
     data = func.read_rdb(rdb_file)[0]
 
@@ -97,8 +96,8 @@ def plt_time(rdb_file, save_plt=False, rmv_flgs=False):
 
         if save_plt is True:
             save_name = '%s_%s_%s_time.pdf' % (star, file_type, ind_ids[k])
-            plt.savefig(('%s/%s' % (dir,save_name)))
-            print "%s timeseries saved to %s/%s" % (ind_ids[k],dir,save_name)
+            plt.savefig(os.path.join(folder, save_name))
+            print "%s timeseries saved to %s" % (ind_ids[k], os.path.join(folder, save_name))
 
         plt.close()
 
@@ -135,12 +134,11 @@ def plt_time_mlty(rdb_file, save_plt=False, rmv_flgs=False, hdrs=['I_CaII', 'I_H
 
     if type(rdb_file) is list: rdb_file = rdb_file[0]
 
-    file_type = rdb_file.split('/')[-1].split('_')[1]
+    folder, file = os.path.split(rdb_file)
+    star = file.split('_')[0]
+    file_type = file.split('_')[1]
 
     width, height = func.plot_params(7, 6.5)
-
-    star = rdb_file.split('/')[-1].split('_')[0]
-    dir = ('/').join(rdb_file.split('/')[:-1])
 
     data = func.read_rdb(rdb_file)[0]
 
@@ -164,7 +162,7 @@ def plt_time_mlty(rdb_file, save_plt=False, rmv_flgs=False, hdrs=['I_CaII', 'I_H
             ind_ids.append(hdrs[k])
 
     if len(ind_ids) == 0:
-        print "No index matches the rdb file and hdr option of plt_time_mlty, must have data for one of the following indices: I_CaII, I_Ha, I_NaI or HeI."
+        print "No index matches the rdb file and hdr option of plt_time_mlty, must have data for one of the following indices: I_CaII, I_Ha, I_NaI or I_HeI."
         return
     if len(ind_ids) == 1:
         print "Only one index in rdb file, no need for multiplot."
@@ -206,11 +204,10 @@ def plt_time_mlty(rdb_file, save_plt=False, rmv_flgs=False, hdrs=['I_CaII', 'I_H
     plt.annotate("N = %i" % N, xy=(0.4,1.*n+0.05), xycoords='axes fraction', textcoords='axes fraction')
 
     plt.subplots_adjust(hspace=0.000)
-    #plt.subplots_adjust(bottom=0.075, left=0.11, top = 0.95, right=0.975)
 
-    save_name =  '%s_%s_%s_time_mlty.pdf' % (star, file_type ,('_').join(ind_ids))
-    plt.savefig(('%s/%s' % (dir,save_name)))
-    print "%s timeseries saved to %s/%s" % ((', ').join(ind_ids),dir,save_name)
+    save_name =  '%s_%s_%s_time_mlty.pdf' % (star, file_type, ('_').join(ind_ids))
+    plt.savefig(os.path.join(folder, save_name))
+    print "%s multiplot saved to %s" % ((', ').join(ind_ids), os.path.join(folder, save_name))
 
     plt.close()
 

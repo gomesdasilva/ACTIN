@@ -46,13 +46,11 @@ def check_lines(wave, sel_lines):
 
 	if wave is None or sel_lines is None: return
 
-	# check if wave is 1d or 2d list
-	try:
-		if len(wave[0]): # 2d spec
-			min_spec_wave = wave[0][0]
-			max_spec_wave = wave[-1][-1]
-			spec_type = '2d'
-	except: # 1d spec
+	if type(wave[0]) is np.ndarray: # 2d spec
+		min_spec_wave = wave[0][0]
+		max_spec_wave = wave[-1][-1]
+		spec_type = '2d'
+	elif type(wave[0]) is np.float64: # 1d spec
 		min_spec_wave = wave[0]
 		max_spec_wave = wave[-1]
 		spec_type = '1d'
@@ -66,7 +64,7 @@ def check_lines(wave, sel_lines):
 
 		if ln_win == 0:
 			print "*** ERROR: line %s bandwidth is zero" % ln_id
-			exit()
+			quit()
 
 		min_wave = ln_ctr - ln_win/2.
 		max_wave = ln_ctr + ln_win/2.
@@ -74,7 +72,7 @@ def check_lines(wave, sel_lines):
 		# Check if line fits inside spectral range
 		if min_wave < min_spec_wave or max_wave > max_spec_wave:
 			print "*** ERROR: Line %s bandwidth outside spectral range" % ln_id
-			exit()
+			quit()
 		else: print "Line %s inside spectral range" % ln_id
 
 		# If wave is 2d check if line fits inside sp. order
@@ -96,7 +94,7 @@ def check_lines(wave, sel_lines):
 				for k in range(len(ln_ctr_orders)):
 					closest_ord = ln_ctr_orders[k]
 					print "\tOrder %i: %.2f-%.2f" % (closest_ord,wave[closest_ord][0],wave[closest_ord][-1])
-				exit()
+				quit()
 			else: print "Line %s inside spectral order %i" % (ln_id,order)
 	return
 
@@ -187,13 +185,13 @@ def calc_flux_lines(data, sel_lines, save_plots=False, weight=None, norm='npixel
 
 	wave = np.asarray(data['wave'])
 	flux = np.asarray(data['flux'])
-	try: blaze = np.asarray(data['blaze'])
-	except: blaze = None
+	if 'blaze' in data.keys(): blaze = np.asarray(data['blaze'])
+	else: blaze = None
 	obj = data['obj']
 	date = data['date']
 
-	try: snr = data['snr']
-	except: snr = None
+	if 'snr' in data.keys(): snr = data['snr']
+	else: snr = None
 
 	sel_lines['flux'] = []
 	sel_lines['error'] = []
@@ -218,7 +216,7 @@ def calc_flux_lines(data, sel_lines, save_plots=False, weight=None, norm='npixel
 		print "\nComputing flux in line %s" % ln_id[k]
 		print "-----------------------%s" % ('-'*len(ln_id[k]))
 
-		print "Using %s bandwidth" % bandtype[k]
+		print "Using %s bandpass" % bandtype[k]
 
 		win = get_win.get_win(wave, flux, ln_ctr[k], ln_win[k], ln_c[k], bandtype[k], blaze=blaze, snr=snr, err=err, weight=weight, norm=norm)
 
@@ -229,7 +227,7 @@ def calc_flux_lines(data, sel_lines, save_plots=False, weight=None, norm='npixel
 		sel_lines['frac_neg'].append(win['frac_neg'])
 
 		# Save plots in the line regions:
-		if save_plots is not False:
+		if save_plots:
 			print "Saving plot of line %s" % ln_id[k]
 
 			bandfunc = win['bandfunc']
@@ -352,8 +350,8 @@ def calc_ind(sel_lines):
 
 		for k in range(len(var)):
 			if 'L' not in var[k] and 'R' not in var[k]:
-				print "*** ERROR: 'ind_var' variable (in configuration file config_lines.txt) must start with either an 'L' for core line or 'R' for reference line. Value given was '%s'" % var[k]
-				return
+				print "*** ERROR: 'ind_var' variable (in config file config_lines.txt) must start with either an 'L' for core line or 'R' for reference line. Value given was '%s'" % var[k]
+				quit()
 
 		# Add line variables for numerator or denominator:
 		num = [flux[k] for k in range(len(var)) if 'L' in var[k]]

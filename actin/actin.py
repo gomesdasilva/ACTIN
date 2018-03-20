@@ -208,7 +208,7 @@ def actin_file(file, calc_index, config_file=config_file, save_output=False, lin
     return data, index, save_name
 
 
-def actin(files, calc_index, config_file=config_file, save_output=False, line_plots=False, obj_name=None, targ_list=None, del_out=False, weight=None, norm='npixels'):
+def actin(files, calc_index, config_file=config_file, save_output=False, line_plots=False, obj_name=None, targ_list=None, del_out=False, weight=None, norm='npixels', config_path=False):
     """
     Runs 'actin_file' function for one or multiple fits files, for one or multiple stars.
     Accepts files of types: 'e2ds', 's1d', 's1d_*_rv', 'ADP', and 'rdb'.
@@ -216,9 +216,9 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
 
     Parameters:
     -----------
-    files : list
+    files : list (optional)
         File(s) to be read by ACTIN. Can be of type 'e2ds', 's1d', 's1d_*_rv', 'ADP', or 'rdb' table.
-    calc_index : list
+    calc_index : list (optional)
         Indices to be calculated. Indices identification must be consistent
         with the ones given in the configuration file.
     config_file : str (optional)
@@ -252,9 +252,16 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
         Function to weight the integrated flux. If 'blaze' the flux is multiplied by the blaze function, if None (default) the flux is not weighted (default).
     norm : str (optional)
     	Normalisation of the flux: if 'band' the sum is normalised by the bandpass wavelength value in angstroms, if 'npixels' by the number of pixels in the bandpass (default), if 'weight' by the sum of the weight function inside the bandpass, if None the integrated flux is not normalised.
+    config_path : bool (optional)
+        Show path to configuration file if True.
 
     NOTE: See 'Returns' of 'actin_file' function above for the returns.
     """
+
+    if config_path:
+        cfg_file = get_config()
+        print "\nACTIN configuration file location:\n%s" % cfg_file
+        return
 
     print "\n#----------------#"
     print "# STARTING ACTIN #"
@@ -263,7 +270,7 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
     start_time = time.time()
 
     if files is None:
-        print "*** ERROR: actin: No file(s) specified. File name(s) should be the first argument of actin.py."
+        print "*** ERROR: No file(s) specified. File name(s) should be the inserted after '-f'."
         return
 
     if weight == 'None': weight = None # str gives problems in comput_flux
@@ -333,7 +340,7 @@ def main():
     parser = argparse.ArgumentParser()
 
 	# add short and long argument
-    parser.add_argument('files', help='Read file(s)', nargs='+')
+    parser.add_argument('--files', '-f', help='Read file(s)', nargs='+')
 
     parser.add_argument('--index', '-i', help="Index id to calculate as designated by 'ind_id' in config_index.txt.", nargs='+', default=None)
 
@@ -351,12 +358,14 @@ def main():
 
     parser.add_argument('--norm', '-n', help='Normalization of flux. Allowed values: band, npixels (default), weight, None.', default='npixels')
 
+    parser.add_argument('--config_path', '-cfg', help='Gives path to configuration file.', default=False, type=lambda x: (str(x).lower() == 'true'))
+
 	# read arguments from the command lines
     args = parser.parse_args()
 
-    actin(files=args.files, calc_index=args.index, config_file=cfg_file, save_output=args.save_data, line_plots=args.save_plots, obj_name=args.obj_name, targ_list=args.targ_list, del_out=args.del_out, weight=args.weight, norm=args.norm)
+    actin(files=args.files, calc_index=args.index, config_file=cfg_file, save_output=args.save_data, line_plots=args.save_plots, obj_name=args.obj_name, targ_list=args.targ_list, del_out=args.del_out, weight=args.weight, norm=args.norm, config_path=args.config_path)
 
-    print "Config file path:\t%s" % os.path.split(cfg_file)[0]
+    #print "Config file path:\t%s" % os.path.split(cfg_file)[0]
 
 
 def get_config():

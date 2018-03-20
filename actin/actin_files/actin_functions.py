@@ -86,7 +86,7 @@ def compute_flux(wave, flux, blaze, ln_ctr, ln_win, ln_c, bandtype, weight=None,
 
         weight = weight * bandfunc
     else:
-        print "*** ERROR: 'bandtype' (in config file) must be either 'sq' or 'tri' but '%s' was given. The config file can be found in your system's user data folder under the directory 'ACTIN'."
+        print "*** ERROR: 'bandtype' (in config file) must be either 'sq' or 'tri' but '%s' was given. The config file path can be found by calling 'actin -cfg True'."
         quit()
 
     weight_win = frac_pixels(wave, weight, wmin, wmax)[0]
@@ -177,7 +177,7 @@ def remove_output(files, save_output, targ_list=None):
             os.remove(ff)
             print "Output file removed: %s" % ff
 
-    except: err_msg = "remove_output: Could not delete output file(s)"
+    except: err_msg = "*** ERROR: Could not delete output file(s)"
     return err_msg
 
 
