@@ -12,7 +12,7 @@ Reads fits files from HARPS and HARPS-N spectrographs, and rdb tables, and outpu
 
 ### Installation:
 
-Copy the github repository to a directory of your choice and install via `python setup.py install`.
+Use `pip install actin` or copy the github repository (in releases) to a directory of your choice and install via `python setup.py install`.
 
 The `config_lines.txt` file is the line configuration file (instructions inside). This file is used to add line parameters to calculate any index as long as the line cores and bandpasses are inside the spectral range and spectral orders range (e2ds files) of the spectrograph. ACTIN will check this at start and give an error message if line parameters don't match the spectra.
 
