@@ -1,7 +1,7 @@
 # ACTIN
 ### Activity Indices Calculator
 
-Reads fits files from HARPS and HARPS-N spectrographs, and rdb tables, and outputs user defined spectral indices.
+Reads fits files from HARPS and HARPS-N spectrographs, and rdb tables, and outputs user defined spectral activity indices.
 
 
 ### Requires the following Python modules:
@@ -34,7 +34,9 @@ Usage:
 `actin [-f files] [-i indices] [-s output path] [-p output path] [-obj object_name] [-tl target list] [-del True/False] [-w line flux weight] [-n normalisation of flux] [-cfg True/False]`
 
 
-Options:
+Arguments:
+
+`-h` : Gives a description of the arguments available.
 
 `-f` str/list : Fits file(s) (formats e2ds, s1d, s1d_*_rv, or ADP) or rdb table(s) with required headers `obj`, `date`, `bjd`, `wave`, `flux`, `error_pixel` (optional) to be read.
 
