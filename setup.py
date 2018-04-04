@@ -22,6 +22,6 @@ setup(name = 'actin',
       install_requires = ['appdirs']
       )
 
-# Need to call ACTIN after installing to create user config file
+
 # This runs ACTIN and gives location of config file
 os.system('actin -cfg True')
