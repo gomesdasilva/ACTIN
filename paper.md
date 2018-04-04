@@ -25,7 +25,11 @@ affiliations:
 - name: Departamento de Física e Astronomia, Faculdade de Ciências, Universidade do Porto, Portugal
   index: 3
 date: 28 March 2018
+output:
+  pdf_document:
+    citation_package: natbib
 bibliography: paper.bib
+biblio-style: humannat
 ---
 
 # Summary
