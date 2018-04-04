@@ -1,5 +1,5 @@
 ---
-title: 'ACTIN: A tool to calculate activity indices'
+title: 'ACTIN: A tool to calculate stellar activity indices'
 tags:
 - stellar activity
 - activity indices
