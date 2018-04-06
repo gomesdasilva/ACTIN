@@ -24,7 +24,7 @@ affiliations:
   index: 2
 - name: Departamento de Física e Astronomia, Faculdade de Ciências, Universidade do Porto, Rua do Campo Alegre, 4169-007 Porto, Portugal
   index: 3
-#date: 28 March 2018
+date: 28 March 2018
 bibliography: paper.bib
 ---
 
