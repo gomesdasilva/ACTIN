@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# compatibility with python 2/3:
+from __future__ import print_function
+from __future__ import division
+
 import sys, os
 import pylab as plt
 import numpy as np
@@ -29,8 +33,8 @@ def check_duplicate(obj, date, file_type, out_dir):
 		True if duplicate, False otherwise.
 	"""
 
-	print "\nCHECKING DUPLICATE"
-	print "------------------"
+	print("\nCHECKING DUPLICATE")
+	print("------------------")
 
 	if obj is None or date is None or out_dir is None: return
 
@@ -41,11 +45,11 @@ def check_duplicate(obj, date, file_type, out_dir):
 		rdb_data = func.read_rdb(file_pname)[0]
 
 		if date in rdb_data['date']:
-			print "Date %s already saved in %s" % (date,file_pname)
-			print "*** ACTION: Ignoring measurement"
+			print("Date %s already saved in %s" % (date,file_pname))
+			print("*** ACTION: Ignoring measurement")
 			return True
 		else:
-			print "Date %s not present in %s" % (date,file_pname)
+			print("Date %s not present in %s" % (date,file_pname))
 
 	return False
 
@@ -205,8 +209,8 @@ def save_data(data, index, out_dir):
 		Output filename with path.
 	"""
 
-	print "\nSAVING DATA"
-	print "-----------"
+	print("\nSAVING DATA")
+	print("-----------")
 
 	if data is None or out_dir is None: return
 
@@ -259,9 +263,9 @@ def save_data(data, index, out_dir):
 
 	if not os.path.isfile(save_name):
 		func.save_rdb(data_save, keys, save_name)
-		print "%s | %s | Data saved to %s" % (all_data['obj'], all_data['date'], save_name)
+		print("%s | %s | Data saved to %s" % (all_data['obj'], all_data['date'], save_name))
 	else:
 		func.add_rdb(data_save, keys, save_name)
-		print "%s | %s | Data added to %s" % (all_data['obj'], all_data['date'], save_name)
+		print("%s | %s | Data added to %s" % (all_data['obj'], all_data['date'], save_name))
 
 	return save_name

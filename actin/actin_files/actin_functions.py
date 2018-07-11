@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# compatibility with python 2/3:
+from __future__ import print_function
+from __future__ import division
+
 import os
 import string
 from pylab import *
@@ -64,7 +68,7 @@ def compute_flux(wave, flux, blaze, ln_ctr, ln_win, ln_c, bandtype, weight=None,
     if weight == 'blaze': weight = blaze
     elif weight == None: weight = np.ones(len(flux))
     else:
-        print "*** ERROR: 'weight' option must be 'blaze' or None, '%s' was given" % weight
+        print("*** ERROR: 'weight' option must be 'blaze' or None, '%s' was given" % weight)
         quit()
 
     wmin = ln_ctr - ln_win/2.
@@ -86,7 +90,7 @@ def compute_flux(wave, flux, blaze, ln_ctr, ln_win, ln_c, bandtype, weight=None,
 
         weight = weight * bandfunc
     else:
-        print "*** ERROR: 'bandtype' (in config file) must be either 'sq' or 'tri' but '%s' was given. The config file path can be found by calling 'actin -cfg True'."
+        print("*** ERROR: 'bandtype' (in config file) must be either 'sq' or 'tri' but '%s' was given. The config file path can be found by calling 'actin -cfg True'.")
         quit()
 
     weight_win = frac_pixels(wave, weight, wmin, wmax)[0]
@@ -107,7 +111,7 @@ def compute_flux(wave, flux, blaze, ln_ctr, ln_win, ln_c, bandtype, weight=None,
         f_sum = ln_c * sum(flux_win_norm * weight_win)
         f_sum_var = sum(variance * weight_win**2)
     else:
-        print "*** ERROR: 'norm' option must be either 'band', 'npixels', 'weight', or None, but '%s' was given" % norm
+        print("*** ERROR: 'norm' option must be either 'band', 'npixels', 'weight', or None, but '%s' was given" % norm)
         quit()
 
     f_sum_err = np.sqrt(f_sum_var)
@@ -175,7 +179,7 @@ def remove_output(files, save_output, targ_list=None):
         for k in range(len(obj)):
             ff = "%s/%s/%s_%s_actin.rdb" % (save_output, obj[k], obj[k], ft)
             os.remove(ff)
-            print "Output file removed: %s" % ff
+            print("Output file removed: %s" % ff)
 
     except: err_msg = "*** ERROR: Could not delete output file(s)"
     return err_msg
@@ -200,7 +204,7 @@ def get_target(fits_file):
                 obj = hdu[0].header['TNG OBS TARG NAME']
                 hdu.close()
             except:
-                print "Cannot identify object"
+                print("Cannot identify object")
                 return
 
     return obj
@@ -211,13 +215,13 @@ def check_targ(fits_file, targets):
     Checks if a fits file belongs to a target in a list of targets.
     """
 
-    print "Targets = %s" % targets
+    print("Targets = %s" % targets)
 
-    print fits_file
+    print(fits_file)
 
     try: fits = pyfits.open(fits_file)
     except:
-        print "*** ERROR: Cannot read %s." % fits_file
+        print("*** ERROR: Cannot read %s." % fits_file)
         return False
 
     # to chose if using HARPS or HARPS-N
@@ -227,10 +231,10 @@ def check_targ(fits_file, targets):
     except:
         try: obj = fits[0].header['%s OBS TARG NAME' % tel[:3]]
         except:
-            print "*** ERROR: Cannot get object identification."
+            print("*** ERROR: Cannot get object identification.")
             return False
 
-    print "Object = %s" % obj
+    print("Object = %s" % obj)
 
     if obj in targets: return True
     else: return False

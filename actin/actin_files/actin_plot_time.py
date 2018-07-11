@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
+# compatibility with python 2/3:
+from __future__ import print_function
+from __future__ import division
+
 import sys, os
 import numpy as np
 import pylab as plt
 
-# Location of SPECHA files:
-sys.path.append("specha_files/")
-
-# SPECHA files
 import actin_functions as func
 
 
@@ -35,11 +35,11 @@ def plt_time(rdb_file, save_plt=False, rmv_flgs=False):
     Output directory is the same as the one the rdb file is located.
     """
 
-    print "\nPLOTTING TIMESERIES"
-    print "-------------------"
+    print("\nPLOTTING TIMESERIES")
+    print("-------------------")
 
     if rdb_file is None:
-        print "*** ERROR: No rdb file given to plot timeseries."
+        print("*** ERROR: No rdb file given to plot timeseries.")
         return
 
     if type(rdb_file) is list: rdb_file = rdb_file[0]
@@ -60,7 +60,7 @@ def plt_time(rdb_file, save_plt=False, rmv_flgs=False):
             ind_ids.append(('_').join(data.keys()[k].split('_')[:2]))
 
     if not ind_ids:
-        print "No indices detected in %s" % rdb_file
+        print("No indices detected in %s" % rdb_file)
         return
 
     # remove duplicates of ind_id and gives a list of selected indices
@@ -97,7 +97,7 @@ def plt_time(rdb_file, save_plt=False, rmv_flgs=False):
         if save_plt is True:
             save_name = '%s_%s_%s_time.pdf' % (star, file_type, ind_ids[k])
             plt.savefig(os.path.join(folder, save_name))
-            print "%s timeseries saved to %s" % (ind_ids[k], os.path.join(folder, save_name))
+            print("%s timeseries saved to %s" % (ind_ids[k], os.path.join(folder, save_name)))
 
         plt.close()
 
@@ -145,11 +145,11 @@ def plt_time_mlty(rdb_file, save_plt=False, rmv_flgs=False, hdrs=['I_CaII', 'I_H
     bjd = np.asarray(data['bjd']) - 2450000
 
     if len(hdrs) == 0:
-        print "No indices selected in plt_time_mlty"
+        print("No indices selected in plt_time_mlty")
         return
 
     if len(hdrs) == 1:
-        print "Only one index selected, no need for multiplot"
+        print("Only one index selected, no need for multiplot")
         return
 
     ind = {} # make new dictionary just for plots
@@ -162,10 +162,10 @@ def plt_time_mlty(rdb_file, save_plt=False, rmv_flgs=False, hdrs=['I_CaII', 'I_H
             ind_ids.append(hdrs[k])
 
     if len(ind_ids) == 0:
-        print "No index matches the rdb file and hdr option of plt_time_mlty, must have data for one of the following indices: I_CaII, I_Ha, I_NaI or I_HeI."
+        print("No index matches the rdb file and hdr option of plt_time_mlty, must have data for one of the following indices: I_CaII, I_Ha, I_NaI or I_HeI.")
         return
     if len(ind_ids) == 1:
-        print "Only one index in rdb file, no need for multiplot."
+        print("Only one index in rdb file, no need for multiplot.")
         return
 
     plot_n = 0
@@ -207,7 +207,7 @@ def plt_time_mlty(rdb_file, save_plt=False, rmv_flgs=False, hdrs=['I_CaII', 'I_H
 
     save_name =  '%s_%s_%s_time_mlty.pdf' % (star, file_type, ('_').join(ind_ids))
     plt.savefig(os.path.join(folder, save_name))
-    print "%s multiplot saved to %s" % ((', ').join(ind_ids), os.path.join(folder, save_name))
+    print("%s multiplot saved to %s" % ((', ').join(ind_ids), os.path.join(folder, save_name)))
 
     plt.close()
 
@@ -217,7 +217,7 @@ def plt_time_mlty(rdb_file, save_plt=False, rmv_flgs=False, hdrs=['I_CaII', 'I_H
 if __name__ == '__main__':
 
     if len(sys.argv) < 2:
-        print "You haven't specified any arguments. Use -h to get more details on how to use this command."
+        print("You haven't specified any arguments. Use -h to get more details on how to use this command.")
         sys.exit(1)
 
     import argparse

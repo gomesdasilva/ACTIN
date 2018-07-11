@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# compatibility with python 2/3:
+from __future__ import print_function
+from __future__ import division
+
 import numpy as np
 
 # ACTIN FILES
@@ -41,8 +45,8 @@ def check_lines(wave, sel_lines):
 	exit() if test fails.
 	"""
 
-	print "\nCHECKING LINES FOR WAVELENGTH RANGE AND SP. ORDERS"
-	print "--------------------------------------------------"
+	print("\nCHECKING LINES FOR WAVELENGTH RANGE AND SP. ORDERS")
+	print("--------------------------------------------------")
 
 	if wave is None or sel_lines is None: return
 
@@ -63,7 +67,7 @@ def check_lines(wave, sel_lines):
 		ln_win = sel_lines['ln_win'][k]
 
 		if ln_win == 0:
-			print "*** ERROR: line %s bandwidth is zero" % ln_id
+			print("*** ERROR: line %s bandwidth is zero" % ln_id)
 			quit()
 
 		min_wave = ln_ctr - ln_win/2.
@@ -71,9 +75,9 @@ def check_lines(wave, sel_lines):
 
 		# Check if line fits inside spectral range
 		if min_wave < min_spec_wave or max_wave > max_spec_wave:
-			print "*** ERROR: Line %s bandwidth outside spectral range" % ln_id
+			print("*** ERROR: Line %s bandwidth outside spectral range" % ln_id)
 			quit()
-		else: print "Line %s inside spectral range" % ln_id
+		else: print("Line %s inside spectral range" % ln_id)
 
 		# If wave is 2d check if line fits inside sp. order
 		if spec_type == '2d':
@@ -87,15 +91,15 @@ def check_lines(wave, sel_lines):
 					ln_ctr_orders.append(i)
 
 			if order is None:
-				print "*** ERROR: Could not determine sp. order for %s" % ln_id
-				print "\tmin_wave = %.2f" % min_wave
-				print "\tmax_wave = %.2f" % max_wave
-				print "\tThe closest orders are:"
+				print("*** ERROR: Could not determine sp. order for %s" % ln_id)
+				print("\tmin_wave = %.2f" % min_wave)
+				print("\tmax_wave = %.2f" % max_wave)
+				print("\tThe closest orders are:")
 				for k in range(len(ln_ctr_orders)):
 					closest_ord = ln_ctr_orders[k]
-					print "\tOrder %i: %.2f-%.2f" % (closest_ord,wave[closest_ord][0],wave[closest_ord][-1])
+					print("\tOrder %i: %.2f-%.2f" % (closest_ord,wave[closest_ord][0],wave[closest_ord][-1]))
 				quit()
-			else: print "Line %s inside spectral order %i" % (ln_id,order)
+			else: print("Line %s inside spectral order %i" % (ln_id,order))
 	return
 
 
@@ -173,14 +177,14 @@ def calc_flux_lines(data, sel_lines, save_plots=False, weight=None, norm='npixel
 		==========  ========================================================
 	"""
 
-	print "\nCALCULATING FLUX IN SELECTED LINES"
-	print "----------------------------------"
+	print("\nCALCULATING FLUX IN SELECTED LINES")
+	print("----------------------------------")
 
 	if data is None:
-		print "*** ERROR: data dictionary is empty"
+		print("*** ERROR: data dictionary is empty")
 		return
 	if sel_lines is None:
-		print "*** ERROR: sel_lines dictionary is empty"
+		print("*** ERROR: sel_lines dictionary is empty")
 		return
 
 	wave = np.asarray(data['wave'])
@@ -208,15 +212,15 @@ def calc_flux_lines(data, sel_lines, save_plots=False, weight=None, norm='npixel
 
 	if 'error_pixel' in data.keys():
 		# case where pixel errors are given in rdb file as "error_pixel"
-		print "Using pixel errors from input rdb file."
+		print("Using pixel errors from input rdb file.")
 		err = data['error_pixel']
 	else: err = None
 
 	for k in range(len(ln_id)):
-		print "\nComputing flux in line %s" % ln_id[k]
-		print "-----------------------%s" % ('-'*len(ln_id[k]))
+		print("\nComputing flux in line %s" % ln_id[k])
+		print("-----------------------%s" % ('-'*len(ln_id[k])))
 
-		print "Using %s bandpass" % bandtype[k]
+		print("Using %s bandpass" % bandtype[k])
 
 		win = get_win.get_win(wave, flux, ln_ctr[k], ln_win[k], ln_c[k], bandtype[k], blaze=blaze, snr=snr, err=err, weight=weight, norm=norm)
 
@@ -228,7 +232,7 @@ def calc_flux_lines(data, sel_lines, save_plots=False, weight=None, norm='npixel
 
 		# Save plots in the line regions:
 		if save_plots:
-			print "Saving plot of line %s" % ln_id[k]
+			print("Saving plot of line %s" % ln_id[k])
 
 			bandfunc = win['bandfunc']
 
@@ -299,11 +303,11 @@ def calc_ind(sel_lines):
 		==========  ========================================================
 	"""
 
-	print "\nCALCULATING INDICES"
-	print "-------------------"
+	print("\nCALCULATING INDICES")
+	print("-------------------")
 
 	if sel_lines is None:
-		print "*** ERROR: sel_lines dictionary is empty."
+		print("*** ERROR: sel_lines dictionary is empty.")
 		return
 
 	# remove duplicates of ind_id and gives a list of selected indices
@@ -318,8 +322,8 @@ def calc_ind(sel_lines):
 	index['mfrac_neg'] = []
 	index['snr'] = []
 
-	print "index\tvalue\terror\t\tsnr\tflag\tmfrac_neg"
-	print "-----\t-----\t-----\t\t---\t----\t---------"
+	print("index\tvalue\terror\t\tsnr\tflag\tmfrac_neg")
+	print("-----\t-----\t-----\t\t---\t----\t---------")
 
 	ind_ids = np.asarray(sel_lines['ind_id'])
 	rows = len(sel_lines['ln_id'])
@@ -350,7 +354,7 @@ def calc_ind(sel_lines):
 
 		for k in range(len(var)):
 			if 'L' not in var[k] and 'R' not in var[k]:
-				print "*** ERROR: 'ind_var' variable (in config file config_lines.txt) must start with either an 'L' for core line or 'R' for reference line. Value given was '%s'" % var[k]
+				print("*** ERROR: 'ind_var' variable (in config file config_lines.txt) must start with either an 'L' for core line or 'R' for reference line. Value given was '%s'" % var[k])
 				quit()
 
 		# Add line variables for numerator or denominator:
@@ -376,6 +380,6 @@ def calc_ind(sel_lines):
 		index['mfrac_neg'].append(mfrac_neg)
 		index['snr'].append(snr_ind)
 
-		print "%s\t%.4f\t%.7f\t%s\t%s\t%.6f" % (index['index'][i], index['value'][i], index['error'][i],index['snr'][i],index['flg'][i], index['mfrac_neg'][i])
+		print("%s\t%.4f\t%.7f\t%s\t%s\t%.6f" % (index['index'][i], index['value'][i], index['error'][i],index['snr'][i],index['flg'][i], index['mfrac_neg'][i]))
 
 	return index

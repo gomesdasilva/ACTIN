@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# compatibility with python 2/3:
+from __future__ import print_function
+from __future__ import division
+
 
 def read(config_file, calc_index):
     """
@@ -41,16 +45,16 @@ def read(config_file, calc_index):
     	==========  ========================================================
     """
 
-    print "\nLOADING DATA FROM CONFIG FILE"
-    print "-----------------------------"
+    print("\nLOADING DATA FROM CONFIG FILE")
+    print("-----------------------------")
 
     if config_file is None:
-    	print "*** ERROR: No config file provided."
+    	print("*** ERROR: No config file provided.")
     	return
 
     try: f = open(config_file, 'r')
     except:
-    	print "*** ERROR: Cannot read config file."
+    	print("*** ERROR: Cannot read config file.")
     	return
 
     # Ignores commented lines, reads header, then stops when dash is found
@@ -91,7 +95,7 @@ def read(config_file, calc_index):
     # Check weather the selected indices have lines in config table
     for k in range(len(sel_ind)):
     	if sel_ind[k] not in lines['ind_id']:
-    		print "*** ERROR: Index %s is not in the config table." % sel_ind[k]
+    		print("*** ERROR: Index %s is not in the config table." % sel_ind[k])
     	else: pass
 
     #Iinitiate a dictionary with keys as the headers in table and make empty lists
@@ -102,7 +106,7 @@ def read(config_file, calc_index):
     rows = len(lines['ind_id'])
     for k in range(rows):
     	if lines['ind_id'][k] in sel_ind:
-    		print lines['ln_id'][k]
+    		print(lines['ln_id'][k])
     		for i in range(len(keys)):
     			sel_lines[keys[i]].append(lines[keys[i]][k])
     	else: pass

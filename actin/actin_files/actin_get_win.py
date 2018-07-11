@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
+# compatibility with python 2/3:
+from __future__ import print_function
+from __future__ import division
+
 import numpy as np
 
-### added to compare with malavolta
-from astropy.io import fits
-
-import pylab as plt
 import actin_functions as func
 
 
@@ -40,10 +40,9 @@ def sel_order(wave_2d, ln_ctr, ln_win):
 			order.append(ord)
 
 	if ord is None:
-		print ""
-		print "ERROR: Could not determine spectral order for:"
-		print "       * min_wave = %f.2" % min_wave
-		print "       * max_wave = %f.2" % max_wave
+		print("\nERROR: Could not determine spectral order for:")
+		print("       * min_wave = %f.2" % min_wave)
+		print("       * max_wave = %f.2" % max_wave)
 
 	return order
 
@@ -122,7 +121,7 @@ def get_win(wave, flux, ln_ctr, ln_win, ln_c, bandtype, blaze=None, snr=None, er
 	if blaze is not None:
 		order = sel_order(wave, ln_ctr, ln_win)
 		order = order[-1]
-		print "Using order %i" % order
+		print("Using order %i" % order)
 
 		wave = np.asarray(wave[order])
 		flux = np.asarray(flux[order])
@@ -142,14 +141,14 @@ def get_win(wave, flux, ln_ctr, ln_win, ln_c, bandtype, blaze=None, snr=None, er
 	# Calculate the flux inside bandpass taking into account fraction of pixels
 	flux_win, pixels_win = func.frac_pixels(wave, flux, wmin, wmax)
 
-	print "Nr. of pixels in bandpass = %.2f" % pixels_win
+	print("Nr. of pixels in bandpass = %.2f" % pixels_win)
 
 	# Function to flag negative flux inside
 	flg, frac_neg = func.flag_negflux(flux_win)
 
 	if flg == 'negFlux':
-		print "*** WARNING: Negative flux detected"
-		print "Fraction of flux with negative values = %s" % frac_neg
+		print("*** WARNING: Negative flux detected")
+		print("Fraction of flux with negative values = %s" % frac_neg)
 
 	# Computing flux for line parameters
 	f_sum, f_sum_err, bandfunc = func.compute_flux(wave, flux, blaze, ln_ctr, ln_win, ln_c, bandtype=bandtype, weight=weight,norm=norm)

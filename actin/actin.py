@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# compatibility with python 2/3:
+from __future__ import print_function
+from __future__ import division
+
 import sys, os
 import glob
 import time
@@ -114,9 +118,9 @@ def actin_file(file, calc_index, config_file=config_file, save_output=False, lin
         Output rdb filename with path.
     """
 
-    print "\n--------------------"
-    print "EXECUTING ACTIN_FILE"
-    print "--------------------"
+    print("\n--------------------")
+    print("EXECUTING ACTIN_FILE")
+    print("--------------------")
 
     if type(file) is list: file = file[0]
 
@@ -124,7 +128,7 @@ def actin_file(file, calc_index, config_file=config_file, save_output=False, lin
     if targ_list is not None:
         targ_test = func.check_targ(file, targets=targ_list)
         if targ_test is False:
-            print "*** ERROR: %s does not belong to any star in the targets list." % file
+            print("*** ERROR: %s does not belong to any star in the targets list." % file)
             return
 
     data = {}
@@ -147,7 +151,7 @@ def actin_file(file, calc_index, config_file=config_file, save_output=False, lin
     elif ".rdb" in file:
         file_type = 'rdb'
     else:
-        print "*** ERROR: actin: Cannot recognise file type"
+        print("*** ERROR: actin: Cannot recognise file type")
         return
 
     if not files: return
@@ -169,12 +173,12 @@ def actin_file(file, calc_index, config_file=config_file, save_output=False, lin
 
     elif file_type == 'rdb':
 		# the table must have as headers: 'obj','date','bjd','wave','flux','error_pixel' (optional)
-        print "\nLOADING DATA FROM .rdb TABLE"
-        print "----------------------------"
-        print "READING FILE:\t%s" % file
+        print("\nLOADING DATA FROM .rdb TABLE")
+        print("----------------------------")
+        print("READING FILE:\t%s" % file)
         data = func.read_rdb(file)[0]
         #else: data['file_orig'] = file.split('/')[-1]
-        print "OBJECT:\t\t%s" % data['obj'][0]
+        print("OBJECT:\t\t%s" % data['obj'][0])
         if save_output is True:
             dupl = save_data.check_duplicate(data['obj'][0], data['date'][0], file_type, out_dir=save_output)
             if dupl is True: return
@@ -196,7 +200,7 @@ def actin_file(file, calc_index, config_file=config_file, save_output=False, lin
         index = calc_ind.calc_ind(sel_lines)
 
     else:
-        print "\nNo indices selected. Insert an index with the '-i' option. Index ids are in the column 'ind_id' of the config_lines.txt file."
+        print("\nNo indices selected. Insert an index with the '-i' option. Index ids are in the column 'ind_id' of the config_lines.txt file.")
         index = None
 
 	# Write output to rdb file in "out_dir"/"obj"
@@ -260,17 +264,17 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
 
     if config_path:
         cfg_file = get_config()
-        print "\nACTIN configuration file location:\n%s" % cfg_file
+        print("\nACTIN configuration file location:\n%s" % cfg_file)
         return
 
-    print "\n#----------------#"
-    print "# STARTING ACTIN #"
-    print "#----------------#"
+    print("\n#----------------#")
+    print("# STARTING ACTIN #")
+    print("#----------------#")
 
     start_time = time.time()
 
     if files is None:
-        print "*** ERROR: No file(s) specified. File name(s) should be the inserted after '-f'."
+        print("*** ERROR: No file(s) specified. File name(s) should be the inserted after '-f'.")
         return
 
     if weight == 'None': weight = None # str gives problems in comput_flux
@@ -278,7 +282,7 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
 
     # Remove output file
     if del_out is True:
-        print "\nSearching output files to delete..."
+        print("\nSearching output files to delete...")
         err_msg = func.remove_output(files, save_output=save_output, targ_list=targ_list)
 
     # Option to make line plots directory the same as the data output dir
@@ -312,14 +316,14 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
 
     elapsed_time = time.time() - start_time
 
-    print "\n---------------------------"
+    print("\n---------------------------")
     if type(files) is str: nfiles = 1
     else: nfiles = len(files)
-    print "Weight used in flux:\t%s" % weight
-    print "Normalization of flux:\t%s" % norm
-    print "Files analysed:\t\t%i" % nfiles
-    print "Save output:\t\t%s" % save_output
-    print "Elapsed time:\t\t%.4f min" % (float(elapsed_time)/60.)
+    print("Weight used in flux:\t%s" % weight)
+    print("Normalization of flux:\t%s" % norm)
+    print("Files analysed:\t\t%i" % nfiles)
+    print("Save output:\t\t%s" % save_output)
+    print("Elapsed time:\t\t%.4f min" % (float(elapsed_time)/60.))
 
     return
 
@@ -331,7 +335,7 @@ def main():
     cfg_file = get_config()
 
     if len(sys.argv) < 2:
-        print "You haven't specified any arguments. Use -h to get more details on how to use this command."
+        print("You haven't specified any arguments. Use -h to get more details on how to use this command.")
         sys.exit(1)
 
     import argparse

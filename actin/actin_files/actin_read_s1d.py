@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# compatibility with python 2/3:
+from __future__ import print_function
+from __future__ import division
+
 import os
 import glob
 import numpy as np
@@ -48,16 +52,16 @@ def read_file_s1d(s1d_pfile, obj_name=None):
 		==========  ========================================================
 	"""
 
-	print "\nREADING FILES FROM s1d FITS FILE"
-	print "--------------------------------"
+	print("\nREADING FILES FROM s1d FITS FILE")
+	print("--------------------------------")
 
 	if s1d_pfile is None:
-		print "*** ERROR: s1d file with path required"
+		print("*** ERROR: s1d file with path required")
 		return
 
 	try: s1d = pyfits.open(s1d_pfile)
 	except:
-		print "*** ERROR: Cannot read %s" % s1d_pfile
+		print("*** ERROR: Cannot read %s" % s1d_pfile)
 		return
 
 	folder, s1d_file = os.path.split(s1d_pfile)
@@ -66,34 +70,34 @@ def read_file_s1d(s1d_pfile, obj_name=None):
 
 	s1d_file_info = s1d_file.split('_')[0]
 
-	print "WORKING FOLDER:\t%s%s" % (folder, os.path.sep)
-	print "READING FILE:\t%s" % s1d_file
+	print("WORKING FOLDER:\t%s%s" % (folder, os.path.sep))
+	print("READING FILE:\t%s" % s1d_file)
 
 	tel = s1d[0].header['TELESCOP'] # ESO-3P6 for HARPS, TNG for HARPS-N
 	instr = s1d[0].header['INSTRUME'] # instrument used
 
-	print "TELESCOPE:\t%s" % tel[:3]
-	print "INSTRUMENT:\t%s" % instr
+	print("TELESCOPE:\t%s" % tel[:3])
+	print("INSTRUMENT:\t%s" % instr)
 
 	if instr == 'HARPS': obs = 'ESO'
 	elif instr == 'HARPN': obs = 'TNG'
 	else:
-		print "*** ERROR: Instrument not recognized"
+		print("*** ERROR: Instrument not recognized")
 
 	try: obj = s1d[0].header['OBJECT']
 	except:
 		try: obj = s1d[0].header['%s OBS TARG NAME' % obs]
 		except:
-			print "*** ERROR: Cannot identify object"
+			print("*** ERROR: Cannot identify object")
 			return
 
 	s1d.close()
 
-	print "OBJECT:\t\t%s" % obj
+	print("OBJECT:\t\t%s" % obj)
 
 	# Check if target is science or calibration file
 	if obj in ('WAVE,WAVE,THAR1','WAVE,WAVE,THAR2'):
-		print '*** ERROR: File is ThAr flux'
+		print('*** ERROR: File is ThAr flux')
 		return
 
 	# Override object name with name given in obj_name option
@@ -101,7 +105,7 @@ def read_file_s1d(s1d_pfile, obj_name=None):
 		if type(obj_name) is list and len(obj_name) == 1:
 			obj = obj_name[0]
 		elif type(obj_name) is list and len(obj_name) > 1:
-			print "*** ERROR: obj_name requires only one name, more than one given"
+			print("*** ERROR: obj_name requires only one name, more than one given")
 			return
 		else: obj = obj_name
 
@@ -114,9 +118,9 @@ def read_file_s1d(s1d_pfile, obj_name=None):
 		ccf_pfile = glob.glob(filename)[0]
 		ccf_fits = pyfits.open(ccf_pfile)
 		ccf_fits.close()
-		print "CCF FILE:\t%s" % os.path.split(ccf_pfile)[-1]
+		print("CCF FILE:\t%s" % os.path.split(ccf_pfile)[-1])
 	except:
-		print "*** WARNING: Cannot read CCF file"
+		print("*** WARNING: Cannot read CCF file")
 		ccf_pfile = None
 
 	# Test BIS file
@@ -125,9 +129,9 @@ def read_file_s1d(s1d_pfile, obj_name=None):
 		bis_pfile = glob.glob(filename)[0]
 		bis_fits = pyfits.open(bis_pfile)
 		bis_fits.close()
-		print "BIS FILE:\t%s" % os.path.split(bis_pfile)[-1]
+		print("BIS FILE:\t%s" % os.path.split(bis_pfile)[-1])
 	except:
-		print "*** WARNING: Cannot read BIS file"
+		print("*** WARNING: Cannot read BIS file")
 		bis_pfile = None
 
 	files = {}
@@ -208,11 +212,11 @@ def load_data_s1d(files):
 		==========  ========================================================
 	"""
 
-	print "\nREADING DATA FROM s1d FITS FILE"
-	print "-------------------------------"
+	print("\nREADING DATA FROM s1d FITS FILE")
+	print("-------------------------------")
 
 	if not files:
-		print "*** ERROR: files dictionary is empty"
+		print("*** ERROR: files dictionary is empty")
 		return
 
 	flg = None
@@ -222,11 +226,11 @@ def load_data_s1d(files):
 	s1d = pyfits.open(files['s1d'])
 
 	flux = s1d[0].data
-	print "Flux data read success"
+	print("Flux data read success")
 
 	header = s1d[0].header
 	wave_orig = header['CRVAL1'] + header['CDELT1']*np.arange(header['NAXIS1'])
-	print "Wavelength calculated"
+	print("Wavelength calculated")
 
 	obj = files['obj']
 	date = files['date']
@@ -248,7 +252,7 @@ def load_data_s1d(files):
 
 	# If using s1d need rv to calibrate wavelength
 	if not files['ccf'] and rest_frame != 'rv':
-		print "*** ERROR: No ccf file found but required to calibrate wavelength"
+		print("*** ERROR: No ccf file found but required to calibrate wavelength")
 		return
 
 	if files['ccf']:
@@ -262,7 +266,7 @@ def load_data_s1d(files):
 
 		ccf_fits.close()
 
-		print "CCF data read success"
+		print("CCF data read success")
 
 		rv = rv * 1000 # convert to m/s
 		fwhm = fwhm * 1000 # convert to m/s
@@ -270,7 +274,7 @@ def load_data_s1d(files):
 
 	elif not files['ccf']:
 		rv = None; rv_err = None; fwhm = None; cont = None; ccf_noise = None
-		print "*** WARNING: No CCF data available"
+		print("*** WARNING: No CCF data available")
 
 	# If using s1d_*_rv the wavelength is already at rest frame
 	if rest_frame == 'rv': wave = wave_orig
@@ -284,9 +288,9 @@ def load_data_s1d(files):
 		bis = bis_fits[0].header['HIERARCH %s DRS BIS SPAN' % obs] # [km/s]
 		bis = bis * 1000 # convert to m/s
 		bis_fits.close()
-		print "BIS data read success"
+		print("BIS data read success")
 	elif not files['bis']:
-		print "*** WARNING: No BIS data available"
+		print("*** WARNING: No BIS data available")
 		bis = None
 
 	data = {}

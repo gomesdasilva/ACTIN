@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# compatibility with python 2/3:
+from __future__ import print_function
+from __future__ import division
+
 import os
 import glob
 import numpy as np
@@ -47,16 +51,16 @@ def read_file_adp(adp_pfile, obj_name=None):
 		==========  ========================================================
 	"""
 
-	print "\nREADING FILES FROM ADP FITS FILE"
-	print "--------------------------------"
+	print("\nREADING FILES FROM ADP FITS FILE")
+	print("--------------------------------")
 
 	if not adp_pfile:
-		print "*** ERROR: ADP file with path required"
+		print("*** ERROR: ADP file with path required")
 		return
 
 	try: adp = pyfits.open(adp_pfile)
 	except:
-		print "*** ERROR: Cannot read %s" % adp_pfile
+		print("*** ERROR: Cannot read %s" % adp_pfile)
 		return
 
 	folder, adp_file = os.path.split(adp_pfile)
@@ -65,32 +69,32 @@ def read_file_adp(adp_pfile, obj_name=None):
 
 	adp_file_info = adp_file.split('_')[0]
 
-	print "WORKING FOLDER:\t%s%s" % (folder, os.path.sep)
-	print "READING FILE:\t%s" % adp_file
+	print("WORKING FOLDER:\t%s%s" % (folder, os.path.sep))
+	print("READING FILE:\t%s" % adp_file)
 
 	tel = adp[0].header['TELESCOP'] # ESO-3P6 for HARPS, TNG for HARPS-N
 	instr = adp[0].header['INSTRUME'] # instrument used
 
-	print "TELESCOPE:\t%s" % tel
-	print "INSTRUMENT:\t%s" % instr
+	print("TELESCOPE:\t%s" % tel)
+	print("INSTRUMENT:\t%s" % instr)
 
 	if instr == 'HARPS': obs = 'ESO'
 	elif instr == 'HARPN': obs = 'TNG'
 	else:
-		print "*** ERROR: Instrument not recognized"
+		print("*** ERROR: Instrument not recognized")
 
 	try: obj = adp[0].header['OBJECT']
 	except:
 		try: obj = adp[0].header['%s OBS TARG NAME' % obs]
 		except:
-			print "*** ERROR: Cannot identify object"
+			print("*** ERROR: Cannot identify object")
 			return
 
-	print "OBJECT:\t\t%s" % obj
+	print("OBJECT:\t\t%s" % obj)
 
 	# Check if target is science or calibration file
 	if obj in ('WAVE,WAVE,THAR1','WAVE,WAVE,THAR2'):
-		print '*** ERROR: File is ThAr flux'
+		print('*** ERROR: File is ThAr flux')
 		return
 
 	# Override object name with name given in obj_name option
@@ -98,7 +102,7 @@ def read_file_adp(adp_pfile, obj_name=None):
 		if type(obj_name) is list and len(obj_name) == 1:
 			obj = obj_name[0]
 		elif type(obj_name) is list and len(obj_name) > 1:
-			print "*** ERROR: obj_name requires only one name, more than one given"
+			print("*** ERROR: obj_name requires only one name, more than one given")
 			return
 		else: obj = obj_name
 
@@ -113,9 +117,9 @@ def read_file_adp(adp_pfile, obj_name=None):
 		ccf_pfile = glob.glob(filename)[0]
 		ccf_fits = pyfits.open(ccf_pfile)
 		ccf_fits.close()
-		print "CCF FILE:\t%s" % os.path.split(ccf_pfile)[-1]
+		print("CCF FILE:\t%s" % os.path.split(ccf_pfile)[-1])
 	except:
-		print "*** WARNING: Cannot read CCF file"
+		print("*** WARNING: Cannot read CCF file")
 		ccf_pfile = None
 
 	# Test BIS file
@@ -124,9 +128,9 @@ def read_file_adp(adp_pfile, obj_name=None):
 		bis_pfile = glob.glob(filename)[0]
 		bis_fits = pyfits.open(bis_pfile)
 		bis_fits.close()
-		print "BIS FILE:\t%s" % os.path.split(bis_pfile)[-1]
+		print("BIS FILE:\t%s" % os.path.split(bis_pfile)[-1])
 	except:
-		print "*** WARNING: Cannot read BIS file"
+		print("*** WARNING: Cannot read BIS file")
 		bis_pfile = None
 
 	files = {}
@@ -203,11 +207,11 @@ def load_data_adp(files):
 		==========  ========================================================
 	"""
 
-	print "\nREADING DATA FROM ADP FITS FILE"
-	print "-------------------------------"
+	print("\nREADING DATA FROM ADP FITS FILE")
+	print("-------------------------------")
 
 	if not files:
-		print "*** ERROR: files dictionary is empty"
+		print("*** ERROR: files dictionary is empty")
 		return
 
 	flg = None
@@ -217,10 +221,10 @@ def load_data_adp(files):
 	adp = pyfits.open(files['adp'])
 
 	flux = adp[1].data[0][1]
-	print "Flux data read success"
+	print("Flux data read success")
 
 	wave_orig = adp[1].data[0][0]
-	print "Wave data read success"
+	print("Wave data read success")
 
 	header = adp[0].header
 
@@ -251,7 +255,7 @@ def load_data_adp(files):
 
 		ccf_fits.close()
 
-		print "CCF data read success"
+		print("CCF data read success")
 
 		# RV already corrected for BERV (from CCF file)
 		rv = rv * 1000 # convert to m/s
@@ -261,11 +265,11 @@ def load_data_adp(files):
 		# Wavelength Doppler shift correction (BERV already corrected)
 		delta_wave = rv * wave_orig / lightspeed
 		wave = wave_orig - delta_wave
-		print "Wavelength Doppler shift (to rest frame) corrected"
+		print("Wavelength Doppler shift (to rest frame) corrected")
 
 	elif not files['ccf']:
 		rv = None; rv_err = None; fwhm = None; cont = None; ccf_noise = None
-		print "*** ERROR: No CCF data available but required to calibrate wavelength"
+		print("*** ERROR: No CCF data available but required to calibrate wavelength")
 		return
 
 	if files['bis']:
@@ -273,9 +277,9 @@ def load_data_adp(files):
 		bis = bis_fits[0].header['HIERARCH %s DRS BIS SPAN' % obs] # [km/s]
 		bis = bis * 1000 # convert to m/s
 		bis_fits.close()
-		print "BIS data read success"
+		print("BIS data read success")
 	elif not files['bis']:
-		print "*** WARNING: No BIS data available"
+		print("*** WARNING: No BIS data available")
 		bis = None
 
 

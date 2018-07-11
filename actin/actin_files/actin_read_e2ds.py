@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# compatibility with python 2/3:
+from __future__ import print_function
+from __future__ import division
+
 import os
 import glob
 import numpy as np
@@ -49,15 +53,15 @@ def check_for_calib_files(e2ds_header, file_type, folder, dif_time_max=1.0):
 			index = time_dif.index(min(time_dif))
 			calib_pfile = calib_pfiles[index]
 			calib = pyfits.open(calib_pfile) # test new file
-			print "New %s file used:\t%s" % (file_type, os.path.split(calib_pfile)[-1])
-			print "%s file time difference to e2ds = %.2f days" % (file_type,min(time_dif))
+			print("New %s file used:\t%s" % (file_type, os.path.split(calib_pfile)[-1]))
+			print("%s file time difference to e2ds = %.2f days" % (file_type,min(time_dif)))
 			calib.close()
 			return calib_pfile
 		else:
-			print "*** WARNING: Closest %s file was produced longer than 1 day" % file_type
+			print("*** WARNING: Closest %s file was produced longer than 1 day" % file_type)
 			return None
 	else:
-		print "*** WARNING: No more %s files in folder" % file_type
+		print("*** WARNING: No more %s files in folder" % file_type)
 		return None
 
 
@@ -145,16 +149,16 @@ def read_file_e2ds(e2ds_pfile, obj_name=None):
 		==========  ========================================================
 	"""
 
-	print "\nREADING FILES FROM e2ds FITS FILE"
-	print "--------------------------------"
+	print("\nREADING FILES FROM e2ds FITS FILE")
+	print("--------------------------------")
 
 	if not e2ds_pfile:
-		print "*** ERROR: e2ds file with path required"
+		print("*** ERROR: e2ds file with path required")
 		return
 
 	try: e2ds = pyfits.open(e2ds_pfile)
 	except:
-		print "*** ERROR: Cannot read %s" % e2ds_pfile
+		print("*** ERROR: Cannot read %s" % e2ds_pfile)
 		return
 
 	folder, e2ds_file = os.path.split(e2ds_pfile)
@@ -163,32 +167,32 @@ def read_file_e2ds(e2ds_pfile, obj_name=None):
 
 	e2ds_file_info = e2ds_file.split('_')[0]
 
-	print "WORKING FOLDER:\t%s%s" % (folder, os.path.sep)
-	print "READING FILE:\t%s" % e2ds_file
+	print("WORKING FOLDER:\t%s%s" % (folder, os.path.sep))
+	print("READING FILE:\t%s" % e2ds_file)
 
 	tel = e2ds[0].header['TELESCOP'] # ESO-3P6 for HARPS, TNG for HARPS-N
 	instr = e2ds[0].header['INSTRUME'] # instrument used
 
-	print "TELESCOPE:\t%s" % tel
-	print "INSTRUMENT:\t%s" % instr
+	print("TELESCOPE:\t%s" % tel)
+	print("INSTRUMENT:\t%s" % instr)
 
 	if instr == 'HARPS': obs = 'ESO'
 	elif instr == 'HARPN': obs = 'TNG'
 	else:
-		print "*** ERROR: Instrument not recognized"
+		print("*** ERROR: Instrument not recognized")
 
 	try: obj = e2ds[0].header['OBJECT']
 	except:
 		try: obj = e2ds[0].header['%s OBS TARG NAME' % obs]
 		except:
-			print "*** ERROR: Cannot identify object"
+			print("*** ERROR: Cannot identify object")
 			return
 
-	print "OBJECT:\t\t%s" % obj
+	print("OBJECT:\t\t%s" % obj)
 
 	# Check if target is science or calibration file
 	if obj in ('WAVE,WAVE,THAR1','WAVE,WAVE,THAR2'):
-		print '*** ERROR: File is ThAr flux'
+		print('*** ERROR: File is ThAr flux')
 		return
 
 	# Override object name with name given in obj_name option
@@ -196,7 +200,7 @@ def read_file_e2ds(e2ds_pfile, obj_name=None):
 		if type(obj_name) is list and len(obj_name) == 1:
 			obj = obj_name[0]
 		elif type(obj_name) is list and len(obj_name) > 1:
-			print "*** ERROR: obj_name requires only one name, more than one given"
+			print("*** ERROR: obj_name requires only one name, more than one given")
 			return
 		else: obj = obj_name
 
@@ -205,7 +209,7 @@ def read_file_e2ds(e2ds_pfile, obj_name=None):
 
 	wave_file = e2ds[0].header['HIERARCH %s DRS CAL TH FILE' % obs]
 
-	print "WAVE FILE:\t%s" % wave_file
+	print("WAVE FILE:\t%s" % wave_file)
 
 	if folder: wave_pfile = os.path.join(folder, wave_file)
 	if not folder: wave_pfile = wave_file
@@ -214,14 +218,14 @@ def read_file_e2ds(e2ds_pfile, obj_name=None):
 		wave_fits = pyfits.open(wave_pfile)
 		wave_fits.close()
 	except:
-		print "*** WARNING: The wave file associated with this e2ds is not present"
+		print("*** WARNING: The wave file associated with this e2ds is not present")
 		wave_pfile = None
 
 	blaze_file = e2ds[0].header['HIERARCH %s DRS BLAZE FILE' % obs]
 
 	e2ds.close()
 
-	print "BLAZE FILE:\t%s" % blaze_file
+	print("BLAZE FILE:\t%s" % blaze_file)
 
 	if folder: blaze_pfile = os.path.join(folder, blaze_file)
 	if not folder: blaze_pfile = blaze_file
@@ -231,8 +235,8 @@ def read_file_e2ds(e2ds_pfile, obj_name=None):
 		blaze_fits = pyfits.open(blaze_pfile)
 		blaze_fits.close()
 	except:
-		print "*** WARNING: The blaze file associated with this e2ds is not present"
-		print "Looking for other blaze files in the folder..."
+		print("*** WARNING: The blaze file associated with this e2ds is not present")
+		print("Looking for other blaze files in the folder...")
 		blaze_pfile = check_for_calib_files(e2ds[0].header,'blaze',folder,dif_time_max=1.0)
 
 	# Test CCF file
@@ -241,9 +245,9 @@ def read_file_e2ds(e2ds_pfile, obj_name=None):
 		ccf_pfile = glob.glob(filename)[0]
 		ccf_fits = pyfits.open(ccf_pfile)
 		ccf_fits.close()
-		print "CCF FILE:\t%s" % os.path.split(ccf_pfile)[-1]
+		print("CCF FILE:\t%s" % os.path.split(ccf_pfile)[-1])
 	except:
-		print "*** ERROR: CCF file not found but required for wavelength calibration"
+		print("*** ERROR: CCF file not found but required for wavelength calibration")
 		return
 
 	# Test BIS file
@@ -252,9 +256,9 @@ def read_file_e2ds(e2ds_pfile, obj_name=None):
 		bis_pfile = glob.glob(filename)[0]
 		bis_fits = pyfits.open(bis_pfile)
 		bis_fits.close()
-		print "BIS FILE:\t%s" % os.path.split(bis_pfile)[-1]
+		print("BIS FILE:\t%s" % os.path.split(bis_pfile)[-1])
 	except:
-		print "*** WARNING: Cannot read BIS file"
+		print("*** WARNING: Cannot read BIS file")
 		bis_pfile = None
 
 
@@ -345,11 +349,11 @@ def load_data_e2ds(files):
 		==========  ========================================================
 	"""
 
-	print "\nREADING DATA FROM e2ds FITS FILE"
-	print "--------------------------------"
+	print("\nREADING DATA FROM e2ds FITS FILE")
+	print("--------------------------------")
 
 	if not files:
-		print "*** ERROR: files dictionary is empty."
+		print("*** ERROR: files dictionary is empty.")
 		return
 
 	flg = None
@@ -362,7 +366,7 @@ def load_data_e2ds(files):
 	e2ds = pyfits.open(files['e2ds'])
 
 	flux = np.asarray(e2ds[0].data)
-	print "Flux data read success"
+	print("Flux data read success")
 
 	bjd = e2ds[0].header['HIERARCH %s DRS BJD' % (obs)]
 
@@ -378,9 +382,9 @@ def load_data_e2ds(files):
 		wave_fits = pyfits.open(files['wave'])
 		wave_orig = wave_fits[0].data
 		wave_fits.close()
-		print "Wave data read success"
+		print("Wave data read success")
 	elif not files['wave']:
-		print "*** INFO: No wave file present, computing wave from e2ds"
+		print("*** INFO: No wave file present, computing wave from e2ds")
 		wave_orig = calc_wave(files['e2ds'],obs)
 		wave_orig = np.asarray(wave_orig)
 
@@ -389,9 +393,9 @@ def load_data_e2ds(files):
 		blaze_fits = pyfits.open(files['blaze'])
 		blaze = np.asarray(blaze_fits[0].data)
 		blaze_fits.close()
-		print "Blaze data read success"
+		print("Blaze data read success")
 	elif not files['blaze']:
-		print "*** WARNING: No blaze file present, flux not deblazed"
+		print("*** WARNING: No blaze file present, flux not deblazed")
 		blaze = np.ones([len(flux),len(flux[0])])
 		flg = 'noDeblazed'
 
@@ -406,7 +410,7 @@ def load_data_e2ds(files):
 	cont = ccf_fits[0].header['HIERARCH %s DRS CCF CONTRAST' % obs] # [%]
 	ccf_noise = ccf_fits[0].header['HIERARCH %s DRS CCF NOISE' % obs] # [km/s]
 
-	print "CCF data read success"
+	print("CCF data read success")
 
 	ccf_fits.close()
 
@@ -414,10 +418,10 @@ def load_data_e2ds(files):
 	if files['bis']:
 		bis_fits = pyfits.open(files['bis'])
 		bis = bis_fits[0].header['HIERARCH %s DRS BIS SPAN' % obs] # [km/s]
-		print "BIS data read success"
+		print("BIS data read success")
 		bis_fits.close()
 	elif not files['bis']:
-		print "*** WARNING: No BIS data available"
+		print("*** WARNING: No BIS data available")
 		bis = None
 
 
@@ -436,7 +440,7 @@ def load_data_e2ds(files):
 	# Wavelength Doppler shift (to rest frame) and BERV correction
 	delta_wave = (rv - berv) * wave_orig / lightspeed
 	wave = wave_orig - delta_wave
-	print "Wavelength corrected for RV and BERV (at rest frame)"
+	print("Wavelength corrected for RV and BERV (at rest frame)")
 
 	data = {}
 	data['flux'] = flux
