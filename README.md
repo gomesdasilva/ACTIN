@@ -59,8 +59,15 @@ Arguments:
 
 `-cfg` bool : If `True` gives the path to the configuration file. Default is `False`.
 
+### Testing the code with minimum arguments:
 
-### Example:
+The example below will test the code using the test files provided in the package.
+
+`actin -f test_files/*e2ds.fits -i I_CaII`
+
+NOTE: If not installed via pip, use `python actin.py` instead of `actin`.
+
+### Example for multiple files:
 
 `actin -f ../fits/*/*e2ds_A.fits -i I_CaII I_Ha -s ../output -p same -del True -tl Gl273 Gl581`
 
