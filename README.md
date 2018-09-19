@@ -6,6 +6,7 @@ Reads fits files from HARPS and HARPS-N spectrographs, and rdb tables, and outpu
 
 ### Requires the following Python modules:
 - numpy
+- matplotlib
 - astropy
 - appdirs (included)
 
