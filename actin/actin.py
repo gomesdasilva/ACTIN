@@ -35,7 +35,6 @@ import actin_functions as func
 #config_file = '%s/config_lines.txt' % path
 config_file = os.path.join(path, "config_lines.txt") ##
 
-print('actin 1.1.1\n')
 
 
 def actin_file(file, calc_index, config_file=config_file, save_output=False, line_plots=False, obj_name=None, targ_list=None, del_out=False, weight=None, norm='npixels'):
