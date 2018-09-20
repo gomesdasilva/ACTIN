@@ -63,7 +63,7 @@ Arguments:
 
 The example below will test the code using the test files provided in the package.
 
-`actin -f test_files/*e2ds.fits -i I_CaII`
+`actin -f test_files/*e2ds*.fits -i I_CaII`
 
 NOTE: If not installed via pip, use `python actin.py` instead of `actin`.
 

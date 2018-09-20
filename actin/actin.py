@@ -35,6 +35,8 @@ import actin_functions as func
 #config_file = '%s/config_lines.txt' % path
 config_file = os.path.join(path, "config_lines.txt") ##
 
+print('actin 1.1.1\n')
+
 
 def actin_file(file, calc_index, config_file=config_file, save_output=False, line_plots=False, obj_name=None, targ_list=None, del_out=False, weight=None, norm='npixels'):
     """
@@ -215,7 +217,7 @@ def actin_file(file, calc_index, config_file=config_file, save_output=False, lin
     return data, index, save_name
 
 
-def actin(files, calc_index, config_file=config_file, save_output=False, line_plots=False, obj_name=None, targ_list=None, del_out=False, weight=None, norm='npixels', config_path=False):
+def actin(files, calc_index, config_file=config_file, save_output=False, line_plots=False, obj_name=None, targ_list=None, del_out=False, weight=None, norm='npixels', config_path=False, test=False):
     """
     Runs 'actin_file' function for one or multiple fits files, for one or multiple stars.
     Accepts files of types: 'e2ds', 's1d', 's1d_*_rv', 'ADP', and 'rdb'.
@@ -261,6 +263,8 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
     	Normalisation of the flux: if 'band' the sum is normalised by the bandpass wavelength value in angstroms, if 'npixels' by the number of pixels in the bandpass (default), if 'weight' by the sum of the weight function inside the bandpass, if None the integrated flux is not normalised.
     config_path : bool (optional)
         Show path to configuration file if True.
+    test : {e2ds, s1d, adp} (optional)
+        Tests the program using the fits files provided in the 'test_files' directory.
 
     NOTE: See 'Returns' of 'actin_file' function above for the returns.
     """
@@ -276,8 +280,16 @@ def actin(files, calc_index, config_file=config_file, save_output=False, line_pl
 
     start_time = time.time()
 
+###
+    if test:
+        calc_index = ("I_CaII", "I_Ha", "I_NaI")
+        if test == "e2ds": files = os.path.join(path, "test_files", "HARPS.2003-12-13T06:19:48.371_e2ds_A.fits")
+        if test == "s1d": files = os.path.join(path, "test_files", "HARPS.2003-12-13T06:19:48.371_s1d_A.fits")
+        if test == "adp": files = os.path.join(path, "test_files", "ADP.2014-09-16T11:04:45.123.fits")
+###
+
     if files is None:
-        print("*** ERROR: No file(s) specified. File name(s) should be the inserted after '-f'.")
+        print("*** ERROR: No file(s) specified. File name(s) should be inserted after '-f'.")
         return
 
     if weight == 'None': weight = None # str gives problems in comput_flux
@@ -367,10 +379,12 @@ def main():
 
     parser.add_argument('--config_path', '-cfg', help='Gives path to configuration file.', default=False, type=lambda x: (str(x).lower() == 'true'))
 
+    parser.add_argument('--test', '-t', help='Tests actin using the provided fits files in the "test_files" directory. Options are "e2ds", "s1d", and "adp"', default=False)
+
 	# read arguments from the command lines
     args = parser.parse_args()
 
-    actin(files=args.files, calc_index=args.index, config_file=cfg_file, save_output=args.save_data, line_plots=args.save_plots, obj_name=args.obj_name, targ_list=args.targ_list, del_out=args.del_out, weight=args.weight, norm=args.norm, config_path=args.config_path)
+    actin(files=args.files, calc_index=args.index, config_file=cfg_file, save_output=args.save_data, line_plots=args.save_plots, obj_name=args.obj_name, targ_list=args.targ_list, del_out=args.del_out, weight=args.weight, norm=args.norm, config_path=args.config_path, test=args.test)
 
     #print "Config file path:\t%s" % os.path.split(cfg_file)[0]
 
