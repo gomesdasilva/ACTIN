@@ -59,13 +59,13 @@ Arguments:
 
 `-cfg` bool : If `True` gives the path to the configuration file. Default is `False`.
 
-`-t` str : Tests the program using the test fits files provided. Use `e2ds`, `s1d` or `adp` to test e2ds, s1d or ADP files, respectively.
+`-t` str : Tests the program using the test fits files provided. Use `e2ds`, `s1d` or `adp` to test e2ds, s1d or ADP files, respectively. The code searches for the required files automatically.
 
 ### Testing the code with minimum arguments:
 
 The example below will test the code using the test files provided in the package.
 
-`actin -f test_files/*e2ds*.fits -i I_CaII`
+`actin -f e2ds`
 
 NOTE: If not installed via pip, use `python actin.py` instead of `actin`.
 
