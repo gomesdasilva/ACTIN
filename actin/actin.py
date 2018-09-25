@@ -33,6 +33,14 @@ import actin_functions as func
 # Configuration file:
 config_file = os.path.join(path, "config_lines.txt")
 
+# get version from installation via pip
+try:
+    version = pkg_resources.require("actin")[0].version
+    print("actin %s" % version)
+except:
+    version = "unknown"
+    print("actin %s version" % version)
+
 
 
 def actin_file(file, calc_index, config_file=config_file, save_output=False, line_plots=False, obj_name=None, targ_list=None, del_out=False, weight=None, norm='npixels'):
