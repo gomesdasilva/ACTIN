@@ -172,8 +172,8 @@ def calc_flux_lines(data, sel_lines, save_plots=False, weight=None, norm='npixel
 		error		list : Errors on integrated flux for each line.
 		snr			list : SNR for each line.
 		flg			list : Flag for each line.
-		frac_neg	list : Fraction of flux with negative values for each
-					line.
+		frac_neg	list : Fraction of pixels with negative values of flux
+					for each line.
 		==========  ========================================================
 	"""
 
@@ -278,8 +278,8 @@ def calc_ind(sel_lines):
 		error		list : Errors on integrated flux for each line.
 		snr			list : SNR for each line.
 		flg			list : Flag for each line.
-		frac_neg	list : Fraction of flux with negative values for each
-					line.
+		frac_neg	list : Fraction of pixels with negative values of flux
+					for each line.
 		==========  ========================================================
 
 	Returns:
@@ -297,8 +297,9 @@ def calc_ind(sel_lines):
 		value		float : Index value.
 		error		float : Index error.
 		flg			{str, None} : Index flag.
-		mfrac_neg	float : Maximum fraction of flux with negative values
-					taking into account all lines used to compute index.
+		mfrac_neg	float : Maximum fraction of pixels with negative values
+					of flux taking into account all lines used to compute
+					index.
 		snr			float : Mean SNR of all lines used to compute index.
 		==========  ========================================================
 	"""

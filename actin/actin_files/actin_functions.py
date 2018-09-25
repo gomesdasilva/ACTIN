@@ -90,7 +90,7 @@ def compute_flux(wave, flux, blaze, ln_ctr, ln_win, ln_c, bandtype, weight=None,
 
         weight = weight * bandfunc
     else:
-        print("*** ERROR: 'bandtype' (in config file) must be either 'sq' or 'tri' but '%s' was given. The config file path can be found by calling 'actin -cfg True'.")
+        print("*** ERROR: 'bandtype' (in config file) must be either 'sq' or 'tri' but '%s' was given. The config file path can be found by calling 'actin -cfg True'." % bandtype)
         quit()
 
     weight_win = frac_pixels(wave, weight, wmin, wmax)[0]
@@ -121,12 +121,17 @@ def compute_flux(wave, flux, blaze, ln_ctr, ln_win, ln_c, bandtype, weight=None,
 
 def flag_negflux(flux):
     """
-    Tests if flux has negative values and returns flag 'flg' as 'negFlux' if detected, None otherwise, and the fraction of flux with negative values, 'frac_neg'.
+    Tests if flux has negative values and returns flag 'flg' as 'negFlux' if detected, None otherwise, and the fraction of pixels with negative values of flux, 'frac_neg'.
     """
     negflux_array = np.where(flux < 0.0, flux, 0.0)
-    negflux = sum(negflux_array)
+    #negflux = sum(negflux_array)
 
-    frac_neg = sum(abs(negflux))/sum(flux)
+    negflux_only = [negflux_array[x] for x in range(len(negflux_array)) if negflux_array[x] < 0.0]
+
+    # fraction of pixels with negative flux
+    frac_neg = len(negflux_only)/len(flux)
+
+    #frac_neg = sum(abs(negflux))/sum(flux)
 
     flag_array = np.where(flux < 0.0, 'negFlux', None)
 

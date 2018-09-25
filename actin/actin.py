@@ -17,9 +17,8 @@ import appdirs
 path = os.path.dirname(os.path.realpath(__file__)) # directory of actin.py
 
 # location of ACTIN files:
-actin_files_dir = os.path.join(path, "actin_files") ##
-sys.path.append(actin_files_dir) ##
-#sys.path.append("%s/actin_files/" % path)
+actin_files_dir = os.path.join(path, "actin_files")
+sys.path.append(actin_files_dir)
 import actin_config
 import actin_read_e2ds as read_e2ds
 import actin_read_s1d as read_s1d
@@ -32,8 +31,7 @@ import actin_functions as func
 
 
 # Configuration file:
-#config_file = '%s/config_lines.txt' % path
-config_file = os.path.join(path, "config_lines.txt") ##
+config_file = os.path.join(path, "config_lines.txt")
 
 
 

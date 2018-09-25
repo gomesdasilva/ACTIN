@@ -106,7 +106,7 @@ def get_win(wave, flux, ln_ctr, ln_win, ln_c, bandtype, blaze=None, snr=None, er
 
 		flg 		{str, None} : Flags the presence of negative fluxes
 					inside the bandwidth as 'negFlux', None otherwise.
-		frac_neg 	float : Fraction of flux with negative values.
+		frac_neg 	float : Fraction of pixels with negative values of flux.
 		snr			float : SNR in the spectral order used.
 		order		{int, None} : Spectral order used. None if 1d
 					spectrum.
