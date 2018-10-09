@@ -65,7 +65,7 @@ Arguments:
 
 The example below will test the code using the test files provided in the package.
 
-`actin -f e2ds`
+`actin -t e2ds`
 
 NOTE: If not installed via pip, use `python actin.py` instead of `actin`.
 
