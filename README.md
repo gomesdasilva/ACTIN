@@ -1,4 +1,7 @@
 # ACTIN
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1478610.svg)](https://doi.org/10.5281/zenodo.1478610)
+
 ### Activity Indices Calculator
 
 Reads fits files from HARPS and HARPS-N spectrographs, and rdb tables, and outputs user defined spectral activity indices.
