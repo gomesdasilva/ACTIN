@@ -45,10 +45,7 @@ ACTIN 1.0 comes pre-formated for the .fits files from the HARPS and HARPS-N spec
 
 The code is available and will be updated on [GitHub][] and [PyPI][] and can be easily installed using pip.
 
-
-
-<sup>1</sup>
-rdb tables are tab separated ASCII files with headers separated from the data by minus ('-') symbols with the same length as the headers.</sup>
+[^1]: rdb tables are tab separated ASCII files with headers separated from the data by minus ('-') symbols with the same length as the headers.
 
 [GitHub]: https://github.com/gomesdasilva/ACTIN
 [PyPI]: https://pypi.org/project/actin/
