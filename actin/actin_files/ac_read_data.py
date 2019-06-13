@@ -358,8 +358,13 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
             ccf_hdr = ccf_hdu[0].header
             ccf_hdu.close()
 
-            rv = ccf_hdr['HIERARCH {} DRS CCF RVC'.format(obs)] # [km/s]
-            rv_err = ccf_hdr['HIERARCH {} DRS DVRMS'.format(obs)] # [m/s]
+            try:
+                rv = ccf_hdr['HIERARCH {} DRS CCF RVC'.format(obs)] # [km/s]
+                rv_err = ccf_hdr['HIERARCH {} DRS DVRMS'.format(obs)] # [m/s]
+            except KeyError as err:
+                print("*** ERROR: {}, Ignoring measurement.".format(err))
+                return
+
             ccf_noise = ccf_hdr['HIERARCH {} DRS CCF NOISE'.format(obs)] # [km/s]
             fwhm = ccf_hdr['HIERARCH {} DRS CCF FWHM'.format(obs)] # [km/s]
             fwhm_err = None
