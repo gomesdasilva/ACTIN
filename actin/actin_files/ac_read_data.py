@@ -395,7 +395,7 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
             bis = bis * 1000 # convert to m/s
             bis_err = None
 
-    # Wavelength callibration:
+    # Wavelength calibration:
     c = 299792458.0 # [m/s]
 
     # receiving rv from input

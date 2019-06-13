@@ -59,7 +59,7 @@ def sel_order(wave_2d, ln_ctr, ln_win, file_type):
     if ord_type == "espresso":
         # first two for CaIIK
         if ln_ctr == 3933.664:
-            rders = orders[:-2]
+            orders = orders[:-2]
         # last two for CaIIH
         if ln_ctr == 3968.47:
             orders = orders[2:]
@@ -293,7 +293,7 @@ def get_win(data, ln_id, ln_ctr, ln_win, bandtype, blaze=None, err=None, frac=Tr
             print("*** ERROR: Variance of flux in the line is negative. Cannot compute error.")
             f_sum_err = 0.0
 
-        # mMdian snr of the used orders
+        # median snr of the used orders
         snr = np.median(snr_ord)
 
     # 1d spectra
