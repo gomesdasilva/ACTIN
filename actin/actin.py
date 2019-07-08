@@ -84,7 +84,8 @@ def actin_file(file, calc_index=None, rv_in=None, config_file=config_file, save_
     # Read data from file
     data = ac_read_data.read_data(file, rv_in=rv_in, obj_name=obj_name)
 
-    if not data: return
+    if not data:
+        return
 
     # Check output file for duplicates
     if save_output is not False and data['file_type'] != "rdb":
@@ -93,7 +94,10 @@ def actin_file(file, calc_index=None, rv_in=None, config_file=config_file, save_
 
     if calc_index:
         # Check selected lines for spectral range and orders
-        ac_calc_ind.check_lines(data['wave'], sel_lines)
+        test = ac_calc_ind.check_lines(data['wave'], sel_lines)
+        if not test:
+            print("*** ACTION: Ignoring measurement.")
+            return
 
         # Calculate flux in the required lines
         sel_lines = ac_calc_ind.calc_flux_lines(data, sel_lines, ln_plts=ln_plts, frac=frac)
@@ -177,7 +181,26 @@ def actin(files, calc_index=None, rv_in=None, config_file=None, save_output=Fals
 
     # Remove output file
     if del_out:
-        ac_tools.remove_output(files, save_output, targ_list)
+        print()
+        print("Executing ac_tools.remove_output:")
+        print("Searching output files to delete...")
+        #ac_tools.remove_output(files, save_output, targ_list)
+        if obj_name:
+            for f in files:
+                _, instr = ac_tools.get_instr(f)
+                file_type = ac_tools.get_file_type(f)
+                if isinstance(obj_name, str):
+                    star_name = obj_name
+                    ac_tools.remove_output2(star_name, instr, file_type, save_output)
+                elif isinstance(obj_name, (list, np.ndarray)):
+                    for star_name in obj_name:
+                        ac_tools.remove_output2(star_name, instr, file_type, save_output)
+        elif not obj_name:
+            for f in files:
+                star_name = ac_tools.get_target(f)
+                _, instr = ac_tools.get_instr(f)
+                file_type = ac_tools.get_file_type(f)
+                ac_tools.remove_output2(star_name, instr, file_type, save_output)
 
     # Option to make line plots directory the same as the data output dir
     if ln_plts == 'same':

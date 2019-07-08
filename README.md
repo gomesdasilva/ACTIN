@@ -1,4 +1,4 @@
-# ACTIN 1.3.3
+# ACTIN 1.3.4
 
 ### Activity Indices Calculator
 
@@ -134,7 +134,7 @@ Some of these headers might not be available if CCF files are not provided.
 
 `bis_err` : Error of `bis` [m/s]
 
-`noise` : CCF noise [m/s]
+`ccf_noise` : CCF noise [m/s]
 
 `median_snr` : Median signal-to-noise of spectrum
 
@@ -142,7 +142,9 @@ Some of these headers might not be available if CCF files are not provided.
 
 `bv` : B-V colour
 
-`airmass_end` : Airmass at end of measurement
+`airmass` : Airmass
+
+`exptime` : Exposure time
 
 #### Index headers:
 
@@ -162,7 +164,7 @@ These headers depend on the choices of indices to calculate.
 
 `I_<ind_id>_mfracneg` : Maximum fraction of pixels with negative flux found in the bandpasses of the index
 
-`<ln_id>_npixels` : Number of pixels inside the bandpass associated with the line <ind_ln>.
+`<ln_id>_npixels` : Number of pixels (fractionary) inside the bandpass associated with the line <ind_ln>.
 
 ---
 

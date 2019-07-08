@@ -146,8 +146,8 @@ def read_data_rdb(file):
 def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec=False):
     """
     Reads data from 'S2D', 'S1D', 'e2ds', 's1d', 's1d_*_rv', 'ADP', and 'rdb' files.
-    - force_calc_wave is for testing purposes only.
-    - plot_spec is for testing purposes only.
+    - force_calc_wave is for testing purposes.
+    - plot_spec is for testing purposes.
     """
 
     print()
@@ -223,18 +223,26 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
         snr = [hdr['HIERARCH {} QC ORDER{} SNR'.format(obs,k+1)] for k in range(ords)]
         snr = np.asarray(snr)
         median_snr = np.median(snr)
-        try: bv = hdu['HIERARCH {} OCS OBJ BV'.format(obs)]
+        try: bv = hdr['HIERARCH {} OCS OBJ BV'.format(obs)]
         except: bv = None
-        try: airmass_end = hdr['HIERARCH {} TEL3 AIRM END'.format(obs)]
-        except: airmass_end = None
+        #try: airmass_end = hdr['HIERARCH {} TEL3 AIRM END'.format(obs)]
+        #except: airmass_end = None
+        try: airmass = hdr['AIRMASS']
+        except KeyError: airmass = None
+        try: exptime = hdr['EXPTIME']
+        except KeyError: exptime = None
 
     if instr in ('HARPS', 'HARPN'):
         bjd = hdr['HIERARCH {} DRS BJD'.format(obs)]
         berv = hdr['HIERARCH {} DRS BERV'.format(obs)]
         try: bv = hdr['HIERARCH {} OCS OBJ BV'.format(obs)]
         except: bv = None
-        try: airmass_end = hdu['HIERARCH {} TEL AIRM END'.format(obs)]
-        except: airmass_end = None
+        #try: airmass_end = hdr['HIERARCH {} TEL AIRM END'.format(obs)]
+        #except: airmass_end = None
+        try: airmass = hdr['AIRMASS']
+        except KeyError: airmass = None
+        try: exptime = hdr['EXPTIME']
+        except KeyError: exptime = None
         if file_type in ("s1d", "e2ds"):
             flux = hdu[0].data
             flux_err = None
@@ -322,7 +330,7 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
         cont_err = hdr['HIERARCH {} QC CCF CONTRAST ERROR'.format(obs)] # [%]
         try: bv = hdr['HIERARCH {} OCS OBJ BV'.format(obs)] # B-V
         except: bv = None
-        berv = hdr['HIERARCH {} QC BERV'.format(obs)] # [km/s] barycentric correction
+        berv = hdr['HIERARCH {} QC BERV'.format(obs)] # [km/s] barycentric Earth radial velocity
 
         rv = rv * 1000 # convert to m/s
         rv_err = rv_err * 1000
@@ -477,8 +485,10 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
     data['cont_err'] = cont_err
     data['bis'] = bis
     data['bis_err'] = bis_err
-    data['noise'] = ccf_noise # m/s
-    data['airmass_end'] = airmass_end
+    data['ccf_noise'] = ccf_noise # m/s
+    #data['airmass_end'] = airmass_end
+    data['airmass'] = airmass
+    data['exptime'] = exptime
     data['bv'] = bv
     data['tel'] = tel
     data['instr'] = instr

@@ -38,10 +38,10 @@ def init():
     fnames['time_plt'] = "time.pdf"
     fnames['time_mlty_plt'] = "time_mlty.pdf"
 
-    # output keys (used in ac_seve.py)
+    # output keys (used in ac_save.py)
     global outkeys
     outkeys = {}
-    outkeys = ['obj', 'instr', 'obs_date', 'bjd', 'rv', 'rv_err', 'fwhm', 'fwhm_err', 'cont', 'cont_err', 'bis', 'bis_err', 'noise', 'median_snr', 'data_flg', 'bv', 'airmass_end']
+    outkeys = ['obj', 'instr', 'obs_date', 'bjd', 'rv', 'rv_err', 'fwhm', 'fwhm_err', 'cont', 'cont_err', 'bis', 'bis_err', 'ccf_noise', 'median_snr', 'data_flg', 'bv', 'airmass', 'exptime']
 
     # err messages
     global err

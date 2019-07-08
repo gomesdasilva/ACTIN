@@ -160,13 +160,28 @@ def flag_negflux(flux):
     return flg, frac_neg
 
 
+# The one used:
+def remove_output2(star_name, instr, file_type, save_output):
+
+    file_rmv = "{}_{}_{}_data.rdb".format(star_name, instr, file_type)
+    files = glob.glob(os.path.join(save_output, star_name, file_rmv))
+    if files:
+        for file in files:
+            if os.path.isfile(file):
+                print(f"Removing file {file}")
+                os.remove(file)
+    #else:
+    #    print("There are no files to remove.")
+
+
+# NOT WORKING WHEN USING OBJ ID FROM "-obj" INPUT
 def remove_output(files, save_output, targ_list=None):
     """
     Removes output directories for given fits files 'files', 'save_output' directory and list of targets 'targ_list' (if available).
     """
 
     print()
-    print("Executing actin_functions.remove_output:")
+    print("Executing ac_tools.remove_output:")
     print("Searching output files to delete...")
 
     fn_rdb = ac_set.fnames['data']

@@ -12,7 +12,7 @@ import ac_settings as ac_set
 import ac_get_win
 
 
-def check_lines(wave, sel_lines):
+def check_lines(wave, sel_lines, verb=False):
     """
     Tests if the selected lines from config file fit inside the spectrograph
     wavelength range and fit inside any spectral orders for the case of 2d
@@ -44,10 +44,20 @@ def check_lines(wave, sel_lines):
         min_wave = ln_ctr - ln_win/2.
         max_wave = ln_ctr + ln_win/2.
 
+        if verb:
+            print("min_wave:", min_wave)
+            print("max_wave:", max_wave)
+
+            print("min_spec_wave:", min_spec_wave)
+            print("max_spec_wave:", max_spec_wave)
+
         # Check if line fits inside spectral range
         if min_wave < min_spec_wave or max_wave > max_spec_wave:
-            sys.exit("*** ERROR: Line {} bandwidth outside spectral range.".format(ln_id))
-        else: print("Line {} inside spectral range".format(ln_id))
+            print("*** ERROR: Line {} bandwidth outside spectral range.".format(ln_id))
+            #sys.exit("*** ERROR: Line {} bandwidth outside spectral range.".format(ln_id))
+            return False
+        else:
+            print("Line {} inside spectral range".format(ln_id))
 
         # If wave is 2d check if line fits inside sp. order
         if spec_type == '2d':
@@ -73,7 +83,7 @@ def check_lines(wave, sel_lines):
             else:
                 for i in range(len(order)):
                     print("Line {} inside spectral order {}".format(ln_id, order[i]))
-    return
+    return True
 
 
 def calc_flux_lines(data, sel_lines, ln_plts=False, frac=True):
@@ -298,9 +308,8 @@ def calc_ind(sel_lines):
         if "negFlux" in flg: flg_ind = 'negFlux'
         else: flg_ind = None
 
-        # Mean snr of lines:
-        try: snr_ind = np.mean([float(snr[k]) for k in range(len(snr))])
-        except: snr_ind = None
+        # Median snr of index bandpasses:
+        snr_ind = np.median(snr)
 
         for k in range(len(var)):
             if 'L' not in var[k] and 'R' not in var[k]:
@@ -323,7 +332,7 @@ def calc_ind(sel_lines):
         # Error using propagation of errors for lines and ref lines
         ind_err = np.sqrt(sum(num_err**2) + ind**2 * sum(denom_err**2)) /sum(denom)
 
-        if snr_ind is not None: snr_ind = round(snr_ind, 2)
+        if snr_ind: snr_ind = round(snr_ind, 2)
 
         index['index'].append(sel_ind[i])
         index['value'].append(ind)
