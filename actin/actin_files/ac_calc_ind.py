@@ -302,7 +302,7 @@ def calc_ind(sel_lines):
         npixels = [sel_lines['npixels'][k] for k in range(rows) \
                                                 if ind_ids[k] == sel_ind[i]]
 
-        # Maximum fraction of flux with negative values of all lines
+        # Maximum fraction of flux with negative values of all lines in index
         mfrac_neg = max(frac_neg)
 
         if "negFlux" in flg: flg_ind = 'negFlux'
