@@ -1,4 +1,4 @@
-# ACTIN 1.3.4
+# ACTIN 1.3.5
 
 ### Activity Indices Calculator
 
@@ -40,7 +40,7 @@ NOTE: If not installed via pip, use `python actin.py` instead of `actin`.
 
 Usage:
 
-`actin -h [help] -f [files_list] -i [indices_list] -rv [rv_list] -cf [config_file] -s [output_path] -lp [output_path/same/show] -obj [object_name] -tl [target_list] -del [True/False] -t [test_file_type] -frc [True/False] -sp [True/False]`
+```actin -h [help] -f [files_list] -i [indices_list] -rv [rv_list] -cf [config_file] -s [output_path] -lp [output_path/same/show] -obj [object_name] -tl [target_list] -del [True/False] -t [test_file_type] -frc [True/False] -sp [True/False]```
 
 
 Arguments:
@@ -81,13 +81,13 @@ When arguments accept lists, they can be given in the command line, e.g. `-tl Gl
 
 The example below will test the code using the test files provided in the package.
 
-`actin -t e2ds`
+```actin -t e2ds```
 
 Can also use the options `s1d`, `S1D`, `S2D`, `ADP`, and `rdb` to test on other file types.
 
 ### Example for multiple files:
 
-`actin -f ../fits/*/*e2ds_A.fits -i I_CaII I_Ha -s ../output -del True -tl Gl273 Gl581`
+```actin -f ../fits/*/*e2ds_A.fits -i I_CaII I_Ha -s ../output -del True -tl Gl273 Gl581```
 
 This will execute ACTIN for all the subdirectories inside `../fits/` with files ending with `e2ds_A.fits`, calculate the indices `I_CaII` and `I_Ha`, output the data to `../output/star_names`, and, before running the code, delete any output file that was previously there, in this case `Gl273_HARPS_e2ds_data.rdb` and `Gl581_HARPS_e2ds_data.rdb`. Only fits files belonging to the stars chosen in `-tl` will be read, in this case `Gl273` and `Gl581`. Since `-frc` is True by default, fractional pixels will be used to compute the indices.
 
@@ -96,7 +96,7 @@ This will execute ACTIN for all the subdirectories inside `../fits/` with files 
 
 To use ACTIN as a module use `import actin.actin as actin` and then call the function:
 
-`actin.actin(files, calc_index=None, rv_in=None, config_file=None, save_output=False, ln_plts=False, obj_name=None, targ_list=None, del_out=False, frac=True, test=False, save_plots=False)`
+```actin.actin(files, calc_index=None, rv_in=None, config_file=None, save_output=False, ln_plts=False, obj_name=None, targ_list=None, del_out=False, frac=True, test=False, save_plots=False)```
 
 The arguments are the same as the ones described above (with just a slight different name in some cases).
 
