@@ -111,7 +111,8 @@ def compute_flux(wave, flux, blaze, noise, ln_ctr, ln_win, bandtype, frac=True, 
     print("Pixels in bandpass = %.4f" % npixels)
 
     # Flag negative flux inside bandpass
-    flg, frac_neg = flag_negflux(flux_win)
+    #flg, frac_neg = flag_negflux(flux_win)
+    r_neg_ln, neg_flux, tot_flux, flg_negflux = check_negflux(flux_win, verb=True)
 
     # Test plots
     if test_plot == True:
@@ -135,9 +136,9 @@ def compute_flux(wave, flux, blaze, noise, ln_ctr, ln_win, bandtype, frac=True, 
         plt.axvline(w_out_r, color='g', ls='--')
         plt.show()
 
-    return f_sum, f_sum_var, bandfunc, npixels, flg, frac_neg
+    return f_sum, f_sum_var, bandfunc, npixels, flg_negflux, r_neg_ln
 
-
+# not used:
 def flag_negflux(flux):
     """
     Tests if flux has negative values and returns flag 'flg' as 'negFlux' if detected, None otherwise, and the fraction of pixels with negative values of flux, 'frac_neg'.
@@ -158,6 +159,34 @@ def flag_negflux(flux):
     else: flg = None
 
     return flg, frac_neg
+
+
+def check_negflux(flux, verb=True):
+    flux = np.asarray(flux)
+
+    # Total absolute flux in given spectral line:
+    tot_flux = np.sum(abs(flux))
+
+    # Number of pixels with negative flux
+    neg_pixs = flux[flux < 0].size
+
+    # Negative flux in given spectral line
+    neg_flux = np.sum(flux[flux < 0])
+
+    # Positive flux in given spectral line
+    pos_flux = np.sum(flux[flux > 0])
+
+    # Negative flux ratio for a given spectral line:
+    r_neg_ln = abs(neg_flux)/tot_flux
+
+    flg_negflux = "OK"
+
+    if neg_pixs > 0:
+        if verb:
+            print(f"Negative flux detected")
+        flg_negflux = "negFlux"
+
+    return r_neg_ln, neg_flux, tot_flux, flg_negflux
 
 
 # The one used:

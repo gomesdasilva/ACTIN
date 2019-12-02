@@ -41,7 +41,7 @@ def init():
     # output keys (used in ac_save.py)
     global outkeys
     outkeys = {}
-    outkeys = ['obj', 'instr', 'obs_date', 'bjd', 'rv', 'rv_err', 'fwhm', 'fwhm_err', 'cont', 'cont_err', 'bis', 'bis_err', 'ccf_noise', 'median_snr', 'data_flg', 'bv', 'airmass', 'exptime']
+    outkeys = ['obj', 'instr', 'obs_date', 'bjd', 'rv', 'rv_err', 'fwhm', 'fwhm_err', 'cont', 'cont_err', 'bis', 'bis_err', 'ccf_noise', 'median_snr', 'data_flg', 'bv', 'airmass', 'exptime', 'filename']
 
     # err messages
     global err

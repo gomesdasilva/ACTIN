@@ -177,4 +177,39 @@ For Linux: `~/.local/share/<AppName>`
 
 ---
 
+### Citing
+
+If you use ACTIN in your research, please cite
+
+Gomes da Silva, J. et al. JOSS 3, 667G (2018) (DOI: 10.21105/joss.00667)
+
+or use the ready-made BibTex entry
+
+```
+@ARTICLE{2018JOSS....3..667G,
+       author = {{Gomes da Silva}, Jo{\~a}o and {Figueira}, Pedro and {Santos}, Nuno and
+         {Faria}, Jo{\~a}o},
+        title = "{ACTIN: A tool to calculate stellar activity indices}",
+      journal = {The Journal of Open Source Software},
+     keywords = {Astrophysics - Instrumentation and Methods for Astrophysics, Astrophysics - Solar and Stellar Astrophysics},
+         year = "2018",
+        month = "Nov",
+       volume = {3},
+       number = {31},
+        pages = {667},
+          doi = {10.21105/joss.00667},
+archivePrefix = {arXiv},
+       eprint = {1811.11172},
+ primaryClass = {astro-ph.IM},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2018JOSS....3..667G},
+      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+```
+
+### Published papers using ACTIN
+
+ - Delgado Mena, E. et al. "Planets around evolved intermediate-mass stars. II. Are there really planets around IC 4651 No. 9122, NGC 2423 No. 3, and NGC 4349 No. 127?" A&A 619A, 2D (2018)
+
+---
+
 For issues, bugs or if you would like to contribute to the development of this code contact Joao.Silva(at)astro.up.pt

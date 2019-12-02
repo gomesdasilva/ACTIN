@@ -119,7 +119,7 @@ def calc_wave(e2ds_pfile, obs):
 def read_data_rdb(file):
     """
     Read spectrum from rdb file with the following headers:
-    'obj','obs_date','bjd','wave','flux','error_pixel' (optional)
+    'obj', 'obs_date', 'bjd', 'wave', 'flux', 'error_pixel' (optional)
     """
     print("Reading file:\t{}".format(file))
     try: data, hdr = ac_tools.read_rdb(file)
@@ -468,6 +468,7 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
 
 
     data = {}
+    data['filename'] = os.path.basename(pfile)
     data['flux'] = flux
     data['flux_err'] = flux_err
     data['wave'] = wave
