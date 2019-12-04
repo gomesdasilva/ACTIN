@@ -20,7 +20,7 @@ Reads fits files from HARPS, HARPS-N and ESPRESSO spectrographs, rdb tables, and
 ### Installation:
 
 The easiest way to install ACTIN is to use `pip install actin`.
-Another possibility is to clone the github repository to a directory of your choice and install via `python setup.py install`.
+Another possibility is to clone the github repository to a directory of your choice and install via `python setup.py install`. Note: github versions are generally more up to date.
 
 
 ### Configuration file:
