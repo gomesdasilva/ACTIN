@@ -11,9 +11,13 @@ import astropy.io.fits as pyfits
 import numpy as np
 import glob
 
+
 from matplotlib import pylab as plt
 
 import ac_settings as ac_set
+
+
+
 
 
 def compute_flux(wave, flux, blaze, noise, ln_ctr, ln_win, bandtype, frac=True, test_plot=False):
@@ -356,7 +360,7 @@ def check_targ(fits_file, targets):
 
 def test_actin(test, path, calc_index):
     if not calc_index:
-        calc_index = ("I_CaII", "I_Ha", "I_NaI")
+        calc_index = ("I_CaII", "I_Ha06")
     if test == "S1D":
         files = os.path.join(path, "test_files", "HD41248_1_1_S1D_A.fits")
     elif test == "S2D":
