@@ -309,7 +309,10 @@ def calc_ind(sel_lines):
         else: flg_ind = None
 
         # Median snr of index bandpasses:
-        snr_ind = np.median(snr)
+        if snr is None or snr[0] is None:
+            snr_ind = None
+        else:
+            snr_ind = np.median(snr)
 
         for k in range(len(var)):
             if 'L' not in var[k] and 'R' not in var[k]:

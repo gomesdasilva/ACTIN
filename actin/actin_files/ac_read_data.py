@@ -122,23 +122,25 @@ def read_data_rdb(file):
     'obj', 'obs_date', 'bjd', 'wave', 'flux', 'error_pixel' (optional)
     """
     print("Reading file:\t{}".format(file))
+
     try: data, hdr = ac_tools.read_rdb(file)
     except:
         print("*** ERROR: Cannot read {}".format(file))
         sys.exit()
 
     print("Object:\t\t{}".format(data['obj'][0]))
-    data['wave'] = np.asarray(data['wave'])
-    data['flux'] = np.asarray(data['flux'])
-    data['tel'] = "unknown"
-    data['instr'] = "unknown"
-    data['obj'] = data['obj'][0]
-    data['obs_date'] = data['obs_date'][0]
-    data['bjd'] = data['bjd'][0]
-    data['blaze'] = np.ones(len(data['flux']))
-    data['snr'] = None
+
+    data['wave']       = np.asarray(data['wave'])
+    data['flux']       = np.asarray(data['flux'])
+    data['tel']        = "unknown"
+    data['instr']      = "unknown"
+    data['obj']        = data['obj'][0]
+    data['obs_date']   = data['obs_date'][0]
+    data['bjd']        = data['bjd'][0]
+    data['blaze']      = np.ones(len(data['flux']))
+    data['snr']        = None
     data['median_snr'] = None
-    data['noise'] = 0.0
+    data['ccf_noise']  = 0.0
 
     return data
 
@@ -411,8 +413,8 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
     # Wavelength calibration:
     c = 299792458.0 # [m/s]
 
-    # receiving rv from input
-    if rv_in is not None: rv = rv_in * 1000 # convert to m/s
+    # receiving rv from input (must be in km/s)
+    if rv_in is not None: rv = rv_in * 1000
 
     if instr in ('ESPRESSO'):
         wave = wave_raw - rv * wave_raw / c
@@ -468,7 +470,7 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
 
 
     data = {}
-    data['filename'] = os.path.basename(pfile)
+    data['fits_file'] = os.path.basename(pfile)
     data['flux'] = flux
     data['flux_err'] = flux_err
     data['wave'] = wave
@@ -487,7 +489,6 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
     data['bis'] = bis
     data['bis_err'] = bis_err
     data['ccf_noise'] = ccf_noise # m/s
-    #data['airmass_end'] = airmass_end
     data['airmass'] = airmass
     data['exptime'] = exptime
     data['bv'] = bv

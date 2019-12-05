@@ -112,7 +112,7 @@ def compute_flux(wave, flux, blaze, noise, ln_ctr, ln_win, bandtype, frac=True, 
     f_sum     = sum(flux_win_deb*response/sum(response*px_size_win))
     f_sum_var = sum((flux_win+noise**2)*response**2/blaze_win**2)/sum(response*px_size_win)**2
 
-    print("Pixels in bandpass = %.4f" % npixels)
+    #print("Pixels in bandpass = %.4f" % npixels)
 
     # Flag negative flux inside bandpass
     #flg, frac_neg = flag_negflux(flux_win)

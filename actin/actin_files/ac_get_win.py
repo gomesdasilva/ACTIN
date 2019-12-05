@@ -302,6 +302,7 @@ def get_win(data, ln_id, ln_ctr, ln_win, bandtype, blaze=None, err=None, frac=Tr
         ord_type = None
         wave     = wave
         flux     = flux
+        snr      = median_snr
 
         # Compute flux for line parameters
         f_sum, f_sum_var, bandfunc, npixels, flg, frac_neg = ac_tools.compute_flux(wave, flux, blaze, noise, ln_ctr, ln_win, bandtype=bandtype, frac=frac)
