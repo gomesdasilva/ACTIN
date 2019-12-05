@@ -376,7 +376,7 @@ def test_actin(test, path, calc_index):
     else:
         print("*** ERROR:")
         print("*** Test can only be 'S1D', 'S2D', 'e2ds', 's1d', 'adp', or 'rdb'")
-        return
+        return None, None
     return calc_index, files
 
 
