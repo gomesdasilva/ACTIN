@@ -216,7 +216,9 @@ archivePrefix = {arXiv},
 
 ### Published papers using ACTIN
 
- - Delgado Mena, E. et al. "Planets around evolved intermediate-mass stars. II. Are there really planets around IC 4651 No. 9122, NGC 2423 No. 3, and NGC 4349 No. 127?" A&A 619A, 2D (2018)
+ - Damasso, M. et al. "A low-mass planet candidate orbiting Proxima Centauri at a distance of 1.5 AU" Science Advances, Vol. 6, No. 3 (2020) (DOI: 10.1126/sciadv.aax7467)
+
+ - Delgado Mena, E. et al. "Planets around evolved intermediate-mass stars. II. Are there really planets around IC 4651 No. 9122, NGC 2423 No. 3, and NGC 4349 No. 127?" A&A 619A, 2D (2018) (DOI:10.1051/0004-6361/201833152)
 
 ---
 
