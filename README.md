@@ -35,9 +35,9 @@ Example of a `config_lines.txt` file:
 
 Any index `ind_id` is calculated using the formula:
 
-$$ I = \frac{\sum_i c_i \cdot L_i}{\sum_j k_j \cdot R_j},$$
+![Index equation.](index_eq.png)
 
-where $L_i$ and $R_j$ are the fluxes in the `ind_var` main and reference lines, as indicated in the config file. $c_i$ and $k_j$ are the `ln_c` constants multiplied to each main and reference lines, respectively.
+where Li and Rj are the fluxes in the `ind_var` main and reference lines, as indicated in the config file. ci and kj are the `ln_c` constants multiplied to each main and reference lines, respectively.
 
 The index errors are computed by propagating the equation above and include only photon noise.
 
