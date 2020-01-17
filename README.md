@@ -27,11 +27,27 @@ Another possibility is to clone the github repository to a directory of your cho
 
 The `config_lines.txt` file is the line configuration file (instructions inside). This file is used to add line parameters to calculate any index as long as the line cores and bandpasses are inside the spectral range and spectral orders range (for 2d spectra) of the spectrograph. ACTIN will check this at start and give an error message if line parameters don't match the spectra.
 
-This file is available from the directory each OS uses for storing user data (*)
+Example of a `config_lines.txt` file:
 
-To get your path to the configuration file call `actin` without any arguments.
+![Example of config_lines.txt.](config_file_example.png)
 
-The configuration file can be copied to another directory, modified, and used via `actin -cf dir/filename`.
+
+
+Any index `ind_id` is calculated using the formula:
+
+$$ I = \frac{\sum_i c_i \cdot L_i}{\sum_j k_j \cdot R_j},$$
+
+where $L_i$ and $R_j$ are the fluxes in the `ind_var` main and reference lines, as indicated in the config file. $c_i$ and $k_j$ are the `ln_c` constants multiplied to each main and reference lines, respectively.
+
+The index errors are computed by propagating the equation above and include only photon noise.
+
+
+
+The config file is available from the directory each OS uses for storing user data (*)
+
+To get your path to the config file call `actin` without any arguments.
+
+The file can be copied to another directory, modified, and used by adding `-cf dir/filename` when running `actin`.
 
 NOTE: If not installed via pip, use `python actin.py` instead of `actin`.
 
@@ -65,7 +81,7 @@ Arguments:
 
 `-del` : If `True` deletes any output file (data and logs only; only files that match current ACTIN call will be deleted) before reading the file list and saving output.
 
-`-obj` : Object name to override the one from fits files in case the star has multiple names in different files (ex. Proxima, ProximaCen, Gl551). DO NOT USE WHEN READING FILES FROM MULTIPLE STARS.
+`-obj` : Object name to override the one from fits files in case the star has multiple names in different files (ex. Proxima, ProximaCen, Gl551). BE CAREFUL WHEN READING FILES FROM MULTIPLE STARS.
 
 `-t` : Tests the program using the test files. Options are `S2D`, `S1D`, `e2ds`, `s1d`, `adp` or `rdb` to test these type of files.
 
