@@ -233,6 +233,8 @@ archivePrefix = {arXiv},
 ### Published papers using ACTIN
  - Faria, J. et al. "Decoding the radial velocity variations of HD41248 with ESPRESSO", A&A 635, A13 (2020) (DOI:10.1051/0004-6361/201936389)
 
+ - Chen, G. et al. "Detection of Na, K, and Hα absorption in the atmosphere of WASP-52b using ESPRESSO", A&A, 635A, 171C (2020) (DOI: 10.1051/0004-6361/201936986)
+
  - Damasso, M. et al. "A low-mass planet candidate orbiting Proxima Centauri at a distance of 1.5 AU", Science Advances, Vol. 6, No. 3 (2020) (DOI: 10.1126/sciadv.aax7467)
 
  - Delgado Mena, E. et al. "Planets around evolved intermediate-mass stars. II. Are there really planets around IC 4651 No. 9122, NGC 2423 No. 3, and NGC 4349 No. 127?", A&A 619A, 2D (2018) (DOI:10.1051/0004-6361/201833152)
