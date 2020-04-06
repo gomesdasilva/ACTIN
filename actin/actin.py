@@ -165,7 +165,7 @@ def actin(files, calc_index=None, rv_in=None, config_file=None, save_output=Fals
         calc_index, files = ac_tools.test_actin(test, path, calc_index)
 
     if not files:
-        sys.exit()
+        raise Exception("*** ERROR: There are no files to read")
 
     # Make lists to be iterated below
     if isinstance(files, str): files = [files]
