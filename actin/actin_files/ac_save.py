@@ -102,12 +102,6 @@ def save_data(data, index, out_dir):
             ind['{}_flg'.format(indices[k])] = index['flg'][k]
             ind['{}_mfrac_neg'.format(indices[k])] = index['mfrac_neg'][k]
 
-        # For npixels in each line
-        index_keys = list(index)
-        for k in range(len(index_keys)):
-            if index_keys[k].split('_')[-1] == 'npixels':
-                ind['{}_npixels'.format(index_keys[k].split('_')[0])] = index['{}_npixels'.format(index_keys[k].split('_')[0])]
-
         #index_keys = list(ind.keys())
         index_keys = list(ind)
         index_keys.sort()

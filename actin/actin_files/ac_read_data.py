@@ -470,7 +470,7 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
 
 
     data = {}
-    data['fits_file'] = os.path.basename(pfile)
+    data['filename'] = os.path.basename(pfile)
     data['flux'] = flux
     data['flux_err'] = flux_err
     data['wave'] = wave

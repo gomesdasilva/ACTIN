@@ -54,7 +54,6 @@ def check_lines(wave, sel_lines, verb=False):
         # Check if line fits inside spectral range
         if min_wave < min_spec_wave or max_wave > max_spec_wave:
             print("*** ERROR: Line {} bandwidth outside spectral range.".format(ln_id))
-            #sys.exit("*** ERROR: Line {} bandwidth outside spectral range.".format(ln_id))
             return False
         else:
             print("Line {} inside spectral range".format(ln_id))
@@ -176,7 +175,6 @@ def calc_flux_lines(data, sel_lines, ln_plts=False, frac=True):
     sel_lines['snr'] = []
     sel_lines['flg'] = []
     sel_lines['frac_neg'] = []
-    sel_lines['npixels'] = []
 
     ln_ctr = sel_lines['ln_ctr']
     ln_win = sel_lines['ln_win']
@@ -204,7 +202,6 @@ def calc_flux_lines(data, sel_lines, ln_plts=False, frac=True):
         sel_lines['snr'].append(win['snr'])
         sel_lines['flg'].append(win['flg'])
         sel_lines['frac_neg'].append(win['frac_neg'])
-        sel_lines['npixels'].append(win['npixels'])
 
     return sel_lines
 
@@ -276,7 +273,6 @@ def calc_ind(sel_lines):
     index['flg'] = []
     index['mfrac_neg'] = []
     index['snr'] = []
-    npixels_list = []
 
     print("index\tvalue\terror\t\tsnr\tflag\tmfrac_neg")
     print("-----\t-----\t-----\t\t---\t----\t---------")
@@ -298,8 +294,6 @@ def calc_ind(sel_lines):
         snr = [sel_lines['snr'][k] for k in range(rows) \
                                                 if ind_ids[k] == sel_ind[i]]
         ln_c = [sel_lines['ln_c'][k] for k in range(rows) \
-                                                if ind_ids[k] == sel_ind[i]] ##
-        npixels = [sel_lines['npixels'][k] for k in range(rows) \
                                                 if ind_ids[k] == sel_ind[i]]
 
         # Maximum fraction of flux with negative values of all lines in index
@@ -343,12 +337,7 @@ def calc_ind(sel_lines):
         index['flg'].append(flg_ind)
         index['mfrac_neg'].append(mfrac_neg)
         index['snr'].append(snr_ind)
-        npixels_list.append(npixels)
 
         print("{}\t{:.4f}\t{:.6f}\t{}\t{}\t{:.4f}".format(index['index'][i], index['value'][i], index['error'][i], index['snr'][i], index['flg'][i], index['mfrac_neg'][i]))
-
-    # npixels data
-    for k in range(len(sel_lines['ln_id'])):
-        index['{}_npixels'.format(sel_lines['ln_id'][k])] = sel_lines['npixels'][k]
 
     return index

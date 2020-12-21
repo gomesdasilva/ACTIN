@@ -17,13 +17,47 @@ from matplotlib import pylab as plt
 import ac_settings as ac_set
 
 
-
-
-
 def compute_flux(wave, flux, blaze, noise, ln_ctr, ln_win, bandtype, frac=True, test_plot=False):
     """
-    Calculates the flux inside a bandpass.
+    Calculates the flux inside a bandpass. Interpolates between flux between pixel edges and bandpass limits.
     """
+    step = 1e-4
+
+    def interpolate_band_lims(array, wave, wmin, wmax, step):
+        from scipy.interpolate import interp1d
+
+        res_ratio = np.mean(np.diff(wave))/step
+
+        mask = (wave >= wmin) & (wave <= wmax)
+        wave_int_low = (wave[wave < wmin][-1], wave[wave >= wmin][0])
+        wave_int_high = (wave[wave <= wmax][-1], wave[wave > wmax][0])
+
+        interv_low = (wave >= wave_int_low[0]) & (wave <= wave_int_low[1])
+        interv_high = (wave >= wave_int_high[0]) & (wave <= wave_int_high[1])
+
+        wave_low = wave[interv_low]
+        wave_high = wave[interv_high]
+
+        array_low = array[interv_low]
+        array_high = array[interv_high]
+
+        interp_low = interp1d(wave_low, array_low, kind='linear')
+        interp_high= interp1d(wave_high, array_high, kind='linear')
+
+        wave_i_low = np.arange(np.min(wave_low), np.max(wave_low), step)
+        array_i_low = interp_low(wave_i_low)
+
+        wave_i_high = np.arange(np.min(wave_high), np.max(wave_high), step)
+        array_i_high = interp_high(wave_i_high)
+
+        wave_i = np.r_[wave_i_low, wave[mask], wave_i_high]
+
+        array_i = np.r_[array_i_low/(array_i_low.size*res_ratio), array[mask], array_i_high/(array_i_high.size*res_ratio)]
+
+        return wave_i, array_i
+
+    ctr = ln_ctr
+    win = ln_win
 
     print("Executing compute_flux")
 
@@ -31,138 +65,56 @@ def compute_flux(wave, flux, blaze, noise, ln_ctr, ln_win, bandtype, frac=True, 
 
     # make all important values the size of px_size
     px_size = np.diff(wave)
-    #px_size = [float(px_size[k]) for k in range(len(px_size))] ####
-    #px_size = np.asarray(px_size) ####
     wave  = wave[1:]
     flux  = flux[1:]
     blaze = blaze[1:]
 
-    # make all values float otherwise python will not detect very small differences between wave and wmin/max
-    #wave = [float(wave[k]) for k in range(len(wave))] ###
-    #wave = np.asarray(wave) ####
-
     # BANDPASS TYPES
     if bandtype == 'tri':
-        #wmin = float(ln_ctr - ln_win)
-        #wmax = float(ln_ctr + ln_win)
-        wmin = ln_ctr - ln_win #########
-        wmax = ln_ctr + ln_win #########
+        wmin = ln_ctr - ln_win
+        wmax = ln_ctr + ln_win
+        # used for frac = false:
         cond = (wave > wmin) & (wave < wmax)
         bandfunc = -np.abs(wave-ln_ctr)/ln_win + 1.
         bandfunc = np.where(bandfunc > 0, bandfunc, bandfunc*0.0)
     if bandtype == 'sq':
-        #wmin = float(ln_ctr - ln_win/2.)
-        #wmax = float(ln_ctr + ln_win/2.)
-        wmin = ln_ctr - ln_win/2. #########
-        wmax = ln_ctr + ln_win/2. #########
+        wmin = ln_ctr - ln_win/2.
+        wmax = ln_ctr + ln_win/2.
+        # used for frac = false:
         cond = (wave > wmin) & (wave < wmax)
         bandfunc = np.ones(len(wave))
         bandfunc = np.where(cond, 1., 0.)
 
-    # HARPS METHOD
+
+    # HARPS DRS METHOD
     if frac == False:
-        flux_win     = flux[cond]
-        wave_win     = wave[cond]
-        blaze_win    = blaze[cond]
-        flux_win_deb = flux[cond]/blaze[cond]
-        px_size_win  = px_size[cond]
-        npixels      = len(wave[cond])
-        response     = bandfunc[cond]
+        flux_i  = flux[cond]
+        wave_i  = wave[cond]
+        blaze_i = blaze[cond]
+        dflux_i = flux[cond]/blaze[cond]
+        bp_i    = bandfunc[cond]
+        dflux_i = flux_i/blaze_i
     # ACTIN METHOD
     if frac == True:
-        dwave_l = wave[cond][0]-wmin
-        dwave_r = wmax-wave[cond][-1]
-        dwave = dwave_l + dwave_r
+        wave_i, flux_i = interpolate_band_lims(flux, wave, wmin, wmax, step)
+        _, dflux_i = interpolate_band_lims(flux/blaze, wave, wmin, wmax, step)
 
-        cond_l = (wave < wave[cond][0])
-        cond_r = (wave > wave[cond][-1])
-
-        frac_l = dwave_l/px_size[cond_l][-1]
-        frac_r = dwave_r/px_size[cond_r][0]
-
-        npixels = len(wave[cond]) + frac_l + frac_r
-
-        # just for visualization purposes
-        wave_win  = np.r_[wave[cond][0]-dwave_l, wave[cond], wave[cond][-1]+dwave_r]
-        flux_win  = np.r_[flux[cond_l][-1], flux[cond], flux[cond_r][0]]
-        blaze_win = np.r_[blaze[cond_l][-1], blaze[cond], blaze[cond_r][0]]
-
-        px_size_win = np.r_[px_size[cond_l][-1], px_size[cond], px_size[cond_r][0]]
-
-        response = bandfunc[cond]
-        if bandtype == 'sq':
-            response = np.r_[1*frac_l, response, 1*frac_r]
         if bandtype == 'tri':
-            response = np.r_[0.0, response, 0.0]
+            bp_i = 1 - np.abs(wave_i - ctr)/win
+            bp_i = np.where(bp_i > 0, bp_i, bp_i*0.0)
+        elif bandtype == 'sq':
+            bp_mask = (wave_i >= ctr - win/2) & (wave_i <= ctr + win/2)
+            bp_i = np.where(bp_mask, 1, 0.0)
 
-        flux_win_deb = flux_win/blaze_win
 
-        # tests
-        bandwidth = dwave_l + wave[cond][-1]-wave[cond][0] + dwave_r
-        if bandwidth == (wmax - wmin): pass
-        else: print("*** bandwidth test 1 ERROR")
-
-        bandwidth = frac_r*px_size_win[-1] + sum(px_size[cond][1:]) + px_size_win[0]*frac_l
-        if bandwidth == (wmax - wmin): pass
-        else: print("*** bandwidth test 2 ERROR")
+    r_neg_ln, _, _, flg_negflux = check_negflux(dflux_i, verb=False)
 
     # Flux sum and variance for line:
-
     if not noise: noise = 0.0
-    f_sum     = sum(flux_win_deb*response/sum(response*px_size_win))
-    f_sum_var = sum((flux_win+noise**2)*response**2/blaze_win**2)/sum(response*px_size_win)**2
+    f_sum = sum(dflux_i * bp_i)/win
+    f_sum_var = sum((flux_i + noise**2) * bp_i**2)/win**2
 
-    #print("Pixels in bandpass = %.4f" % npixels)
-
-    # Flag negative flux inside bandpass
-    #flg, frac_neg = flag_negflux(flux_win)
-    r_neg_ln, neg_flux, tot_flux, flg_negflux = check_negflux(flux_win, verb=True)
-
-    # Test plots
-    if test_plot == True:
-        w_out_l = wave[wave < wave[cond][0]][-1]
-        w_in_l  = wave[cond][0]
-        w_out_r = wave[wave > wave[cond][-1]][0]
-        w_in_r  = wave[cond][-1]
-
-        plt.plot(wave, flux, 'kx')
-        plt.plot(wave_win, flux_win*response, 'b.')
-        plt.plot(wave_win, response*max(flux_win),c='orange',ls='-',linewidth=2)
-
-        plt.axhline(0.0, c='k', ls=':')
-
-        plt.axvline(wmin, color='k', ls='-')
-        plt.axvline(w_in_l, color='r', ls=':')
-        plt.axvline(w_out_l, color='g', ls='--')
-
-        plt.axvline(wmax, color='k', ls='-')
-        plt.axvline(w_in_r, color='r', ls=':')
-        plt.axvline(w_out_r, color='g', ls='--')
-        plt.show()
-
-    return f_sum, f_sum_var, bandfunc, npixels, flg_negflux, r_neg_ln
-
-# not used:
-def flag_negflux(flux):
-    """
-    Tests if flux has negative values and returns flag 'flg' as 'negFlux' if detected, None otherwise, and the fraction of pixels with negative values of flux, 'frac_neg'.
-    """
-    negflux_array = np.where(flux < 0.0, flux, 0.0)
-
-    negflux_only = [negflux_array[x] for x in range(len(negflux_array)) if negflux_array[x] < 0.0]
-
-    # fraction of pixels with negative flux
-    frac_neg = len(negflux_only)/len(flux)
-
-    flag_array = np.where(flux < 0.0, 'negFlux', None)
-
-    if 'negFlux' in flag_array:
-        flg = 'negFlux'
-        print("*** WARNING: Negative flux detected")
-        print("Fraction of pixels with negative values = {:.5f}".format(frac_neg))
-    else: flg = None
-
-    return flg, frac_neg
+    return f_sum, f_sum_var, bandfunc, flg_negflux, r_neg_ln
 
 
 def check_negflux(flux, verb=True):
@@ -193,7 +145,6 @@ def check_negflux(flux, verb=True):
     return r_neg_ln, neg_flux, tot_flux, flg_negflux
 
 
-# The one used:
 def remove_output2(star_name, instr, file_type, save_output):
 
     file_rmv = "{}_{}_{}_data.rdb".format(star_name, instr, file_type)
@@ -205,46 +156,6 @@ def remove_output2(star_name, instr, file_type, save_output):
                 os.remove(file)
     #else:
     #    print("There are no files to remove.")
-
-
-# NOT WORKING WHEN USING OBJ ID FROM "-obj" INPUT
-def remove_output(files, save_output, targ_list=None):
-    """
-    Removes output directories for given fits files 'files', 'save_output' directory and list of targets 'targ_list' (if available).
-    """
-
-    print()
-    print("Executing ac_tools.remove_output:")
-    print("Searching output files to delete...")
-
-    fn_rdb = ac_set.fnames['data']
-
-    rdb_search = os.path.join(save_output, "*", "*{}".format(fn_rdb))
-    rdb_files = glob.glob(rdb_search)
-
-    if not rdb_files:
-        print("There are no files to remove.")
-        return
-
-    obj_list = []
-    for file in files:
-        obj_list.append(get_target(file))
-    objs = list(set(obj_list))
-
-    for obj in objs:
-        for rdb_file in rdb_files:
-            if obj in rdb_file:
-                if targ_list is not None:
-                    if obj in targ_list:
-                        os.remove(rdb_file)
-                        print("Output file removed:")
-                        print(rdb_file)
-                else:
-                    os.remove(rdb_file)
-                    print("Output file removed:")
-                    print(rdb_file)
-
-    return
 
 
 def files_by_star_and_ftype(files):

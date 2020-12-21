@@ -14,7 +14,6 @@ Reads fits files from HARPS, HARPS-N and ESPRESSO spectrographs, rdb tables, and
 - numpy
 - matplotlib
 - astropy
-- appdirs (included)
 
 
 ### Installation:
@@ -231,6 +230,10 @@ archivePrefix = {arXiv},
 ```
 
 ### Published papers using ACTIN
+ - Damasso, M. et al. "The GAPS Programme at TNG. XXVII. Reassessment of a young planetary system with HARPS-N: is the hot Jupiter V830 Tau b really there?", A&A 642, A133 (2020) (DOI: 10.1051/0004-6361/202038864)
+ 
+ - Hojjatpanah, S. et al. "The correlation between photometric variability and radial velocity jitter. Based on TESS and HARPS observations", A&A 639, A35 (2020) (DOI: 10.1051/0004-6361/202038035)
+
  - Faria, J. et al. "Decoding the radial velocity variations of HD41248 with ESPRESSO", A&A 635, A13 (2020) (DOI:10.1051/0004-6361/201936389)
 
  - Chen, G. et al. "Detection of Na, K, and Hα absorption in the atmosphere of WASP-52b using ESPRESSO", A&A, 635A, 171C (2020) (DOI: 10.1051/0004-6361/201936986)

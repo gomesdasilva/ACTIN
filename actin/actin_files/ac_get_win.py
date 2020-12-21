@@ -273,7 +273,7 @@ def get_win(data, ln_id, ln_ctr, ln_win, bandtype, blaze=None, err=None, frac=Tr
             snr_ord.append(snr[ord])
 
             # Compute flux for line parameters
-            f_sum, f_sum_var, bandfunc, npixels, flg, frac_neg = ac_tools.compute_flux(wave_ord, flux_ord, blaze_ord, noise, ln_ctr, ln_win, bandtype=bandtype, frac=frac)
+            f_sum, f_sum_var, bandfunc, flg, frac_neg = ac_tools.compute_flux(wave_ord, flux_ord, blaze_ord, noise, ln_ctr, ln_win, bandtype=bandtype, frac=frac)
 
             # Plot line regions
             if ln_plts:
@@ -286,7 +286,7 @@ def get_win(data, ln_id, ln_ctr, ln_win, bandtype, blaze=None, err=None, frac=Tr
         f_sum = sum(num)/sum(denum)
 
         # Compute error
-        f_sum_var = 1.0/sum(denum)
+        f_sum_var = 1.0/sum(denum) # standard error of the weighted mean
         if f_sum_var >= 0.0:
             f_sum_err = np.sqrt(f_sum_var)
         else:
@@ -305,7 +305,7 @@ def get_win(data, ln_id, ln_ctr, ln_win, bandtype, blaze=None, err=None, frac=Tr
         snr      = median_snr
 
         # Compute flux for line parameters
-        f_sum, f_sum_var, bandfunc, npixels, flg, frac_neg = ac_tools.compute_flux(wave, flux, blaze, noise, ln_ctr, ln_win, bandtype=bandtype, frac=frac)
+        f_sum, f_sum_var, bandfunc, flg, frac_neg = ac_tools.compute_flux(wave, flux, blaze, noise, ln_ctr, ln_win, bandtype=bandtype, frac=frac)
 
         # Compute error
         if f_sum_var >= 0.0:
@@ -327,6 +327,5 @@ def get_win(data, ln_id, ln_ctr, ln_win, bandtype, blaze=None, err=None, frac=Tr
     win['order']    = ord
     win['bandfunc'] = bandfunc
     win['ord_type'] = ord_type
-    win['npixels']  = npixels
 
     return win
