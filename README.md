@@ -38,7 +38,15 @@ Any index `ind_id` is calculated using the formula:
 
 where Li and Rj are the fluxes in the `ind_var` main and reference lines, as indicated in the config file. ci and kj are the `ln_c` constants multiplied to each main and reference lines, respectively.
 
-The index errors are computed by propagating the equation above and include only photon noise.
+The description of the flux calculation is available in the Appendix A of [Gomes da Silva et al. 2021](https://ui.adsabs.harvard.edu/abs/2020arXiv201210199G/abstract).
+
+`I_CaII` is the classical S-index [Duncan et al. 1991](https://ui.adsabs.harvard.edu/abs/1991ApJS...76..383D/abstract) (not calibrated to the Mt. Wilson scale).
+
+`I_Ha16` and `I_Ha06` are Halpha indices with 1.6 and 0.6 ang central bandpasses, respectively.
+
+`I_CaI` is an activity insensitive line.
+
+The line parameters for `I_NaI`, `I_Ha16`, and `I_HeI` come from [Gomes da Silva et al. 2011](https://ui.adsabs.harvard.edu/abs/2011A%26A...534A..30G/abstract).
 
 
 
@@ -46,9 +54,9 @@ The config file is available from the directory each OS uses for storing user da
 
 To get your path to the config file call `actin` without any arguments.
 
-The file can be copied to another directory, modified, and used by adding `-cf dir/filename` when running `actin`.
+The file can be copied to another directory, modified, and then used by adding `-cf dir/filename` when running `actin`.
 
-NOTE: If not installed via pip, use `python actin.py` instead of `actin`.
+
 
 
 ### Quick start:
