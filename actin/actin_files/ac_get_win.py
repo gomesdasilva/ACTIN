@@ -250,7 +250,7 @@ def get_win(data, ln_id, ln_ctr, ln_win, bandtype, blaze=None, err=None, frac=Tr
     snr        = data['snr']
     median_snr = data['median_snr']
     blaze      = data['blaze']
-    noise      = data['ccf_noise']
+    noise      = data['RON']
 
     # 2d spectra
     if type(wave[0]) is np.ndarray:

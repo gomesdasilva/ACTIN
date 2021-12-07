@@ -141,6 +141,7 @@ def read_data_rdb(file):
     data['snr']        = None
     data['median_snr'] = None
     data['ccf_noise']  = 0.0
+    data['RON']        = 0.0
 
     return data
 
@@ -237,6 +238,9 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
     if instr in ('HARPS', 'HARPN'):
         bjd = hdr['HIERARCH {} DRS BJD'.format(obs)]
         berv = hdr['HIERARCH {} DRS BERV'.format(obs)]
+        sigdet = hdr['HIERARCH {} DRS CCD SIGDET'.format(obs)] #CCD Readout Noise [e-] 
+        gain = hdr['HIERARCH {} DRS CCD CONAD'.format(obs)]  #CCD conversion factor [e-/ADU]
+        RON = sigdet * gain
         try: bv = hdr['HIERARCH {} OCS OBJ BV'.format(obs)]
         except: bv = None
         #try: airmass_end = hdr['HIERARCH {} TEL AIRM END'.format(obs)]
@@ -333,6 +337,9 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
         try: bv = hdr['HIERARCH {} OCS OBJ BV'.format(obs)] # B-V
         except: bv = None
         berv = hdr['HIERARCH {} QC BERV'.format(obs)] # [km/s] barycentric Earth radial velocity
+        max_RON = 8 # [e-/pix] from the pipeline manual, pag. 16
+        CONAD = 1.1 # [e-/ADU] from the pipeline manual, pag. 16
+        RON = max_RON * CONAD
 
         rv = rv * 1000 # convert to m/s
         rv_err = rv_err * 1000
@@ -489,6 +496,7 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
     data['bis'] = bis
     data['bis_err'] = bis_err
     data['ccf_noise'] = ccf_noise # m/s
+    data['RON'] = RON # Read-Out-Noise per pixel
     data['airmass'] = airmass
     data['exptime'] = exptime
     data['bv'] = bv
