@@ -377,7 +377,9 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
 
             try:
                 rv = ccf_hdr['HIERARCH {} DRS CCF RVC'.format(obs)] # [km/s]
-                rv_err = ccf_hdr['HIERARCH {} DRS DVRMS'.format(obs)] # [m/s]
+                cal_th_err = hdr['HIERARCH {} DRS CAL TH ERROR'.format(obs)] # [m/s]
+                drift_noise = ccf_hdr['HIERARCH {} DRS DRIFT NOISE'.format(obs)] # [m/s]
+                #rv_err = ccf_hdr['HIERARCH {} DRS DVRMS'.format(obs)] # [m/s]
             except KeyError as err:
                 print("*** ERROR: {}, Ignoring measurement.".format(err))
                 return
@@ -392,6 +394,7 @@ def read_data(pfile, rv_in=None, obj_name=None, force_calc_wave=False, plot_spec
             berv = berv * 1000 # convert to m/s
             fwhm = fwhm * 1000 # convert to m/s
             ccf_noise = ccf_noise * 1000 # convert to m/s
+            rv_err = np.sqrt(ccf_noise**2 + drift_noise**2 + cal_th_err**2)
 
         # Reading data from BIS file
         if file_type == 'ADP':
