@@ -1,4 +1,4 @@
-# ACTIN 1.3.8
+# ACTIN 1.3.9
 
 ### Activity Indices Calculator
 
