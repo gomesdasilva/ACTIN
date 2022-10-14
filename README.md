@@ -10,6 +10,11 @@
 Reads fits files from HARPS, HARPS-N and ESPRESSO spectrographs, rdb tables, and outputs user defined spectral activity indices (along with other relevant data).
 
 
+
+*This version is no longer being maintained - please use [ACTIN2](https://github.com/gomesdasilva/ACTIN2) instead.*
+
+
+
 ### Requires the following Python modules:
 - numpy
 - matplotlib
