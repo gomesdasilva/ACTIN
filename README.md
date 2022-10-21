@@ -1,5 +1,8 @@
 # ACTIN 1.3.9
 
+
+*This version is no longer being maintained - please use [ACTIN2](https://github.com/gomesdasilva/ACTIN2) instead.*
+
 ### Activity Indices Calculator
 
 [![DOI](http://joss.theoj.org/papers/10.21105/joss.00667/status.svg)](https://doi.org/10.21105/joss.00667)
@@ -8,10 +11,6 @@
 
 
 Reads fits files from HARPS, HARPS-N and ESPRESSO spectrographs, rdb tables, and outputs user defined spectral activity indices (along with other relevant data).
-
-
-
-*This version is no longer being maintained - please use [ACTIN2](https://github.com/gomesdasilva/ACTIN2) instead.*
 
 
 
